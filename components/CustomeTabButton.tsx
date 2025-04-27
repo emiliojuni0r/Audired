@@ -44,6 +44,8 @@ const styles = StyleSheet.create({
     zIndex: 1,
     position: "absolute",
     backgroundColor: "navy",
+    borderWidth: 5,
+    borderColor: "white",
     borderRadius: 50,
     padding: 10,
     width: 70,
