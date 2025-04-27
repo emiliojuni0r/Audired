@@ -23,7 +23,7 @@ export default function CustomTabButton({
         style={[
           styles.tabButton,
           focused && styles.tabButtonActive,
-          { transform: [{ translateY: focused ? -10 : 0 }] },
+          { transform: [{ translateY: focused ? -25 : 0 }] },
         ]}
       >
         <Ionicons name={iconName} size={24} color="white" />

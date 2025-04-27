@@ -19,7 +19,7 @@ export default function Layout() {
           borderTopLeftRadius: 20,
           borderTopRightRadius: 20,
           position: "absolute",
-          overflow: "hidden",
+          overflow: "visible",
         },
         tabBarButton: (props) => (
           <CustomTabButton {...props} routeName={route.name} />
