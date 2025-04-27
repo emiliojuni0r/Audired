@@ -14,7 +14,7 @@ export default function Layout() {
       screenOptions={({ route }) => ({
         headerShown: false,
         tabBarStyle: {
-          backgroundColor: "orange",
+          backgroundColor: "#FFA600",
           height: 90,
           borderTopLeftRadius: 20,
           borderTopRightRadius: 20,
