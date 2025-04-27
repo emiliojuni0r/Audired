@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
   tabButton: {
     zIndex: 1,
     position: "absolute",
-    backgroundColor: "navy",
+    backgroundColor: "#150E7C",
     borderWidth: 5,
     borderColor: "white",
     borderRadius: 50,
@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   tabButtonActive: {
-    backgroundColor: "green",
+    backgroundColor: "#66BB6A",
   },
   tabLabel: {
     color: "white",
