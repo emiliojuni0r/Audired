@@ -10,8 +10,7 @@ export default function CustomTabButton({
 
   let iconName = "";
   if (routeName === "index") iconName = "home";
-  else if (routeName === "reminder") iconName = "alarm";
-  else if (routeName === "history") iconName = "bookmark";
+  else if (routeName === "settings") iconName = "settings";
 
   return (
     <TouchableOpacity
