@@ -48,7 +48,10 @@ export default function Index() {
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={() => router.push("/(tabs)/labelScanner")}
+            onPress={() => {
+              router.push("/(tabs)/labelScanner");
+              speak("Kamu mengakses halaman Baca label", "id-ID");
+            }}
             className="w-fit h-fit flex flex-col justify-center items-center"
           >
             <View className="border w-[40vw] h-[40vw] border-[#1359A0] rounded-full text-center">
