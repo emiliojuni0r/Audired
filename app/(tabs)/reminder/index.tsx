@@ -8,12 +8,11 @@ export default function ReminderScreen() {
   const { scaledFontSize } = useFontSize();
   return (
     <View className="flex-1 bg-white align-top p-2">
-      // back button
       <TouchableOpacity
         className="flex flex-row w-fit h-fit items-center"
         onPress={() => router.back()}
       >
-        <Ionicons name="arrow-back" size={25} /> // ini icon back sobat
+        <Ionicons name="arrow-back" size={25} />
         <Text
           style={{ fontSize: scaledFontSize("text-base") }}
           className="ml-2 text-base text-black font-medium"

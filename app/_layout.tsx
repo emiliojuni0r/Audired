@@ -9,7 +9,7 @@ export default function RootLayout() {
         <StatusBar barStyle={"dark-content"} />
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="reminder" options={{}} />
+        <Stack.Screen name="login" options={{headerShown: false}} />
       </Stack>
     </FontSizeProvider>
   );

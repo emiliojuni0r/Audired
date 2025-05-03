@@ -55,6 +55,7 @@ export default function TabsLayout() {
           }}
         />
         <Tabs.Screen name="reminder/index" options={{href: null, headerShown: false}} /> // bingung gimana biar ada back nya
+        <Tabs.Screen name="history/index" options={{href: null, headerShown: false}} /> // bingung gimana biar ada back nya
       </Tabs>
     </>
   );

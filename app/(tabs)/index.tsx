@@ -32,6 +32,8 @@ export default function Index() {
           All history and saved
         </Text>
       </Link> 
+
+      <Link href={"/login"}>preview login page..ini nanti di delete</Link>
     </View>
   );
 }
