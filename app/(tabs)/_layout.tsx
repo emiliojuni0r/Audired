@@ -31,6 +31,7 @@ export default function TabsLayout() {
           name="index"
           options={{
             headerTitle : 'Home',
+            tabBarLabel : 'Beranda',
             headerShown: false,
             tabBarIcon: ({ focused, color }) => (
               <Ionicons
@@ -44,6 +45,7 @@ export default function TabsLayout() {
         <Tabs.Screen
           name="settings"
           options={{
+            tabBarLabel : 'Pengaturan',
             headerShown: false,
             tabBarIcon: ({ focused, color }) => (
               <Ionicons
