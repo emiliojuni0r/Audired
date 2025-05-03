@@ -54,8 +54,10 @@ export default function TabsLayout() {
             ),
           }}
         />
-        <Tabs.Screen name="reminder/index" options={{href: null, headerShown: false}} /> // bingung gimana biar ada back nya
-        <Tabs.Screen name="history/index" options={{href: null, headerShown: false}} /> // bingung gimana biar ada back nya
+        <Tabs.Screen name="reminder/index" options={{href: null, headerShown: false}} /> // reminder ga nambah di bottom nav
+        <Tabs.Screen name="history/index" options={{href: null, headerShown: false}} /> // history ga nambah di bottom nav
+        <Tabs.Screen name="labelScanner/index" options={{href: null, headerShown: false}} /> // history ga nambah di bottom nav
+        <Tabs.Screen name="simpan/index" options={{href: null, headerShown: false}} /> // history ga nambah di bottom nav
       </Tabs>
     </>
   );
