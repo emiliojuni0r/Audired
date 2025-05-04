@@ -52,7 +52,7 @@ export default function LabelScanner() {
 
       {modeTakePicture ? (
         <View className="w-full h-full">
-          <Camera></Camera> // ini test aja untuk sementara
+          <Camera></Camera>
         </View>
       ) : (
         <>

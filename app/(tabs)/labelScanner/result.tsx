@@ -70,7 +70,7 @@ export default function LabelScannerResult() {
         <TouchableOpacity
           onPress={() => {
             setIsSaved(!isSaved);
-            speak(isSaved ? "Simpan hasil" : "batalkan simpan hasil");
+            speak(isSaved ? "batalkan simpan hasil" : "Simpan hasil");
           }}
           className={`${
             isSaved ? "bg-white border border-[#150E7C]" : "bg-[#150E7C]"

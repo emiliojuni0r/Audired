@@ -110,7 +110,7 @@ export default function Index() {
       </View>
 
       <Link className="mt-20" href={"/login"}>
-        preview login page..ini nanti di delete
+        <Text>preview login page..ini nanti di delete</Text>
       </Link>
     </View>
   );

@@ -45,6 +45,32 @@ const dummyHasilSimpan = [
     deskripsi:
       "Amoxicillin adalah antibiotik penisilin yang digunakan untuk mengobati berbagai jenis infeksi bakteri.",
   },
+  {
+    id: "3",
+    namaObat: "Amoxicillin",
+    jenisObat: "Kapsul",
+    kekuatan: "500 mg",
+    indikasi: "Infeksi bakteri",
+    dosis: "3 kali sehari, 1 kapsul",
+    dikonsumsi: "Sesuai petunjuk dokter",
+    tanggalKadaluarsa: "2026-03-15",
+    petunjukPenyimpanan: "Simpan di tempat kering dan sejuk",
+    deskripsi:
+      "Amoxicillin adalah antibiotik penisilin yang digunakan untuk mengobati berbagai jenis infeksi bakteri.",
+  },
+  {
+    id: "4",
+    namaObat: "Amoxicillin",
+    jenisObat: "Kapsul",
+    kekuatan: "500 mg",
+    indikasi: "Infeksi bakteri",
+    dosis: "3 kali sehari, 1 kapsul",
+    dikonsumsi: "Sesuai petunjuk dokter",
+    tanggalKadaluarsa: "2026-03-15",
+    petunjukPenyimpanan: "Simpan di tempat kering dan sejuk",
+    deskripsi:
+      "Amoxicillin adalah antibiotik penisilin yang digunakan untuk mengobati berbagai jenis infeksi bakteri.",
+  },
   // Tambahkan data dummy lainnya di sini jika perlu
 ];
 
@@ -59,7 +85,7 @@ export default function PageSimpan() {
 
   // tampilan untuk render (skip aja cik panjang banget soalnya)
   const renderItem = ({ item } : {item : hasilSimpan}) => (
-    <View className="w-full min-h-[170px] border border-[#150E7C] rounded-[10px] flex items-center px-1 py-2 mb-2">
+    <View className="w-full min-h-[170px] border border-[#150E7C] rounded-[10px] flex items-center px-1 py-2 mb-5">
       <View className="w-[90%] h-[0.1px] border-t border-[#150E7C]" />
       <Text className="text-[#150E7C] my-2">Nama obat: {item.namaObat}</Text>
       <View className="w-[90%] h-[0.1px] border-t border-[#150E7C] mb-2" />
@@ -112,7 +138,7 @@ export default function PageSimpan() {
   );
 
   return (
-    <ScrollView className="flex-1 bg-white flex p-2">
+    <View className="flex-1 bg-white flex p-2">
       {/* button back */}
       <TouchableOpacity
         className="flex flex-row w-fit h-fit items-center mr-auto"
@@ -136,7 +162,7 @@ export default function PageSimpan() {
       </Text>
 
       {/* list of hasil scan yang tersinmpan */}
-      <View className="w-full h-full px-[3%] mt-4">
+      <View className="w-full h-[78vh] px-[3%] flex mt-4">
         {/* start of scan tersimpan container */}
         <FlatList
           data={dummyHasilSimpan}
@@ -145,6 +171,6 @@ export default function PageSimpan() {
         />
         {/* end of scan tersimpan container */}
       </View>
-    </ScrollView>
+    </View>
   );
 }
