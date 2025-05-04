@@ -55,7 +55,7 @@ export default function Camera() {
           <TouchableOpacity style={styles.button} onPress={toggleCameraFacing}>
             <AntDesign name="retweet" size={44} color={"black"} />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.button} onPress={handleTakePhoto}>
+          <TouchableOpacity style={styles.button} onPress={handleTakePhoto} className="bg-blue-600">
             <AntDesign name="camera" size={44} color={"black"} />
           </TouchableOpacity>
         </View>
@@ -87,7 +87,7 @@ const styles = StyleSheet.create({
     alignSelf: "flex-end",
     alignItems: "center",
     marginHorizontal: 10,
-    backgroundColor: "gray",
+    backgroundColor: "#150E7C",
     borderRadius: 10,
   },
   text: {
