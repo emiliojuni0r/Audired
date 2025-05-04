@@ -112,7 +112,7 @@ export default function PageSimpan() {
   );
 
   return (
-    <ScrollView className="flex-1 bg-white items-center p-2">
+    <ScrollView className="flex-1 bg-white flex p-2">
       {/* button back */}
       <TouchableOpacity
         className="flex flex-row w-fit h-fit items-center mr-auto"
@@ -131,12 +131,12 @@ export default function PageSimpan() {
       </TouchableOpacity>
 
       {/* titlle */}
-      <Text className="font-semibold text-2xl mt-2.5">
+      <Text className="font-semibold text-2xl mt-2.5 mx-auto">
         Lihat hasil scan yang tersimpan
       </Text>
 
       {/* list of hasil scan yang tersinmpan */}
-      <View className="w-full h-full px-[3%] mt-2">
+      <View className="w-full h-full px-[3%] mt-4">
         {/* start of scan tersimpan container */}
         <FlatList
           data={dummyHasilSimpan}
