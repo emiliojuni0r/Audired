@@ -1,6 +1,5 @@
 import { View, Button, Alert, StyleSheet, Text } from "react-native";
 import * as Google from "expo-auth-session/providers/google";
-import {makeRedirectUri} from "expo-auth-session";
 import * as WebBrowser from "expo-web-browser";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/context/auth";
@@ -8,6 +7,7 @@ import { getAuth, signInWithCredential, GoogleAuthProvider } from "firebase/auth
 import * as SecureStore from "expo-secure-store";
 import axios from "axios";
 import { auth } from "@/firebase";
+import { saveItem } from '../context/SecureStorage'; // Adjust path as needed
 
 
 WebBrowser.maybeCompleteAuthSession();
@@ -43,7 +43,7 @@ export default function Login() {
           
           // Your backend returns a JWT or session token
           const backendToken = res.data.token;``
-          await SecureStore.setItemAsync("token", String(res.data.token));
+          await saveItem("token", String(res.data.token));
           login(backendToken);
         } catch (err) {
           console.error("Login failed", err);

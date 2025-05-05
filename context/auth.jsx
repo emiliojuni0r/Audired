@@ -1,5 +1,6 @@
+// auth.jsx
 import { createContext, useContext, useState, useEffect } from 'react';
-import * as SecureStore from 'expo-secure-store';
+import { saveItem, getItem, deleteItem } from './SecureStorage';
 
 const AuthContext = createContext();
 
@@ -8,19 +9,19 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const loadUser = async () => {
-      const token = await SecureStore.getItemAsync('token');
+      const token = await getItem('token');
       if (token) setUser({ token });
     };
     loadUser();
   }, []);
 
   const login = async (token) => {
-    await SecureStore.setItemAsync('token', token);
+    await saveItem('token', token);
     setUser({ token });
   };
 
   const logout = async () => {
-    await SecureStore.deleteItemAsync('token');
+    await deleteItem('token');
     setUser(null);
   };
 
