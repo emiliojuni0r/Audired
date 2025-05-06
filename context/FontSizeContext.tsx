@@ -1,4 +1,6 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage"; // Storage Async ==> local database for simple data.
+
 
 interface FontSizeContextProps {
     baseFontSize: number;
@@ -21,11 +23,40 @@ interface FontSizeContextProps {
   interface FontSizeProviderProps {
     children: React.ReactNode;
   }
+
+  const FONT_SCALE_KEY = "fontScale"; // key untuk nyimpen data ke AsyncStorage
   
   export const FontSizeProvider: React.FC<FontSizeProviderProps> = ({ children }) => {
-    const [fontScale, setFontScale] = useState(defaultFontSizeContext.fontScale);
+    const [fontScale, setFontScaleState] = useState(defaultFontSizeContext.fontScale);
     const baseFontSize = defaultFontSizeContext.baseFontSize;
-  
+    
+    // Saat Load App, Load Font Scale yang udah disimpan dulu
+    useEffect(() => {
+      const loadFontScale = async () => {
+        try {
+          const storedScale = await AsyncStorage.getItem(FONT_SCALE_KEY); // Diambil dari AsyncStorage pakai KEY yg udah ditentuin
+          if (storedScale !== null) {
+            setFontScaleState(parseFloat(storedScale));
+          }
+        } catch (e) {
+          console.warn("Failed to load font scale:", e);
+        }
+      };
+
+      // Load dari Async Storage Font Seting Sebelumnya
+      loadFontScale();
+    }, []);
+
+    // Set Font Scale yang disimpen, semua update bakal kesimpen
+    const setFontScale = async (scale: number) => {
+      try {
+        await AsyncStorage.setItem(FONT_SCALE_KEY, scale.toString());
+        setFontScaleState(scale);
+      } catch (e) {
+        console.error("Failed to save font scale:", e);
+      }
+    };
+
     const scaledFontSize = (tailwindSize?: string): number | undefined => {
       if (!tailwindSize) {
         return baseFontSize * fontScale; // Default scaling
