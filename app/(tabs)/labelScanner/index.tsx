@@ -16,7 +16,7 @@ export default function LabelScanner() {
 
   const panduanSpeech =
     // "Langkah menggunakan fitur scan, 1. Tekan tombol mulai dibawah panduan,2. Arahkan obat atau label ke kamera 3. Potret dengan menekan tombol pada kamera 4. Tunggu beberapa saat sampai muncul hasil 5. Dengan fitur text-to-speech, dapat membacakan hasil scan 6. Hasil dapat dilihat kembali di riwayat dan bisa juga disimpan ke halaman simpan. Note Jika hasil scan error, coba ulangi kembali proses dari awal dengan tambahan tap bagian tengah agar kamera dapat fokus lalu tekan tombol potret";
-    " ini panduan sementara, cuna dummy";
+    " ini panduan dummy dummy dummy";
   const speechDelay = 3000;
 
   useEffect(() => {
@@ -52,7 +52,7 @@ export default function LabelScanner() {
 
       {modeTakePicture ? (
         <View className="w-full h-full">
-          <Camera></Camera> // ini test aja untuk sementara
+          <Camera></Camera>
         </View>
       ) : (
         <>
