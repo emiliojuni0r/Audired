@@ -3,85 +3,94 @@ import { Ionicons } from "@expo/vector-icons";
 import { router, useFocusEffect } from "expo-router";
 import { FlatList, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import * as Speech from "expo-speech";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 
+// Import Buat Mulai backend 
+import axios  from "axios";
+import { useEffect } from "react";
+import { auth } from "@/firebase";
+
+// Ini Aku Update bang nyesuain Data Object Medication dari BE
 export interface hasilSimpan {
     id : string,
     namaObat: string,
     jenisObat: string,
-    kekuatan: string,
-    indikasi: string,
-    dosis: string,
-    dikonsumsi: string,
+    kekuatanKonsentrasi: string,
+    indikasiObat: string,
+    pemakaianDalamSehari: string,
+    waktuKonsumsi: string,
+    peringatanPerhatian : string,
     tanggalKadaluarsa: string,
     petunjukPenyimpanan: string,
-    deskripsi: string,
+    deskripsiPenggunaanObat: string,
 };
-
-const dummyHasilSimpan = [
-  {
-    id: "1",
-    namaObat: "Panadol",
-    jenisObat: "Tablet",
-    kekuatan: "500 mg",
-    indikasi: "Demam",
-    dosis: "3 kali sehari sampai sembuh",
-    dikonsumsi: "Sesudah Makan",
-    tanggalKadaluarsa: "Tidak ditemukan",
-    petunjukPenyimpanan: "Tidak ditemukan",
-    deskripsi:
-      "Obat di atas adalah Panadol, digunakan untuk meredakan demam dan nyeri ringan hingga sedang.",
-  },
-  {
-    id: "2",
-    namaObat: "Amoxicillin",
-    jenisObat: "Kapsul",
-    kekuatan: "500 mg",
-    indikasi: "Infeksi bakteri",
-    dosis: "3 kali sehari, 1 kapsul",
-    dikonsumsi: "Sesuai petunjuk dokter",
-    tanggalKadaluarsa: "2026-03-15",
-    petunjukPenyimpanan: "Simpan di tempat kering dan sejuk",
-    deskripsi:
-      "Amoxicillin adalah antibiotik penisilin yang digunakan untuk mengobati berbagai jenis infeksi bakteri.",
-  },
-  {
-    id: "3",
-    namaObat: "Amoxicillin",
-    jenisObat: "Kapsul",
-    kekuatan: "500 mg",
-    indikasi: "Infeksi bakteri",
-    dosis: "3 kali sehari, 1 kapsul",
-    dikonsumsi: "Sesuai petunjuk dokter",
-    tanggalKadaluarsa: "2026-03-15",
-    petunjukPenyimpanan: "Simpan di tempat kering dan sejuk",
-    deskripsi:
-      "Amoxicillin adalah antibiotik penisilin yang digunakan untuk mengobati berbagai jenis infeksi bakteri.",
-  },
-  {
-    id: "4",
-    namaObat: "Amoxicillin",
-    jenisObat: "Kapsul",
-    kekuatan: "500 mg",
-    indikasi: "Infeksi bakteri",
-    dosis: "3 kali sehari, 1 kapsul",
-    dikonsumsi: "Sesuai petunjuk dokter",
-    tanggalKadaluarsa: "2026-03-15",
-    petunjukPenyimpanan: "Simpan di tempat kering dan sejuk",
-    deskripsi:
-      "Amoxicillin adalah antibiotik penisilin yang digunakan untuk mengobati berbagai jenis infeksi bakteri.",
-  },
-  // Tambahkan data dummy lainnya di sini jika perlu
-];
 
 export default function PageSimpan() {
   const { scaledFontSize } = useFontSize();
+  const [dataObat, setDataObat] = useState<hasilSimpan[]>([]);
+  const [loading, setLoading] = useState(true);
+
   const speak = (text: string, languageCode = "id-ID") => {
     Speech.speak(text, { language: languageCode });
   };
+
+  // Jalanin Fetch Data Selalu setelah Buka Halaman
+  useEffect(() => {
+    fetchData();
+  }, []);
+  
   const [isShowDetail, setIsShowDetail] = useState(false);
 
   const [expandedItemId, setExpandedItemId] = useState<string>(""); // Menyimpan ID item yang sedang detailnya ditampilkan
+
+  // Ambil Data Obat dari Backend
+  const fetchData = async () => {
+    try {
+    setLoading(true);
+
+    const user = auth.currentUser;
+    const token = await user?.getIdToken();
+
+    const response = await axios("https://audired-820e0.et.r.appspot.com/api/medication/my",{
+      headers : {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      data : {
+        userid : user
+      }
+    })
+    // console.log(response.data) 
+    setDataObat(response.data.data);
+    } catch (error) {
+      console.error("Gagal mengambil data:", error);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+
+  const deleteData = async (medicationId : string) =>{
+    try {
+      const user = auth.currentUser;
+      const token = await user?.getIdToken();
+      
+      const response = await axios.delete(
+      `https://audired-820e0.et.r.appspot.com/api/medication/my/${medicationId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    setDataObat((prevData) => prevData.filter(item => item.id !== medicationId));
+    // console.log("Berhasil menghapus:", response.data);
+    speak("Obat berhasil dihapus.");
+    } catch (error) {
+      console.error("Gagal menghapus:", error);
+      speak("Gagal menghapus obat.");
+    }
+  }
 
   // tampilan untuk render (skip aja cik panjang banget soalnya)
   const renderItem = ({ item } : {item : hasilSimpan}) => (
@@ -96,22 +105,22 @@ export default function PageSimpan() {
         } w-[90%] h-fit justify-start items-start content-start my-2`}
       >
         <Text>Jenis obat: {item.jenisObat}</Text>
-        <Text>Kekuatan/Konsentrasi: {item.kekuatan}</Text>
-        <Text>Indikasi obat: {item.indikasi}</Text>
-        <Text>Dosis: {item.dosis}</Text>
-        <Text>Dikonsumsi: {item.dikonsumsi}</Text>
+        <Text>Kekuatan/Konsentrasi: {item.kekuatanKonsentrasi}</Text>
+        <Text>Indikasi obat: {item.indikasiObat}</Text>
+        <Text>Dosis: {item.pemakaianDalamSehari}</Text>
+        <Text>Dikonsumsi: {item.waktuKonsumsi}</Text>
         <Text>Tanggal Kadaluarsa: {item.tanggalKadaluarsa}</Text>
         <Text>Petunjuk Penyimpanan: {item.petunjukPenyimpanan}</Text>
         <View className="w-[100%] h-[0.1px] border-t border-[#150E7C] my-2" />
         <Text>Deskripsi:</Text>
-        <Text>{item.deskripsi}</Text>
+        <Text>{item.deskripsiPenggunaanObat}</Text>
         <View className="w-[100%] h-[0.1px] border-t border-[#150E7C] mt-1" />
       </View>
 
       {/* two button container */}
       <View className="w-full flex items-center gap-y-3 my-auto">
         {/* button hapus */}
-        <TouchableOpacity className="bg-[#150E7C] w-[70%] h-[40px] flex justify-center items-center rounded-[10px]">
+        <TouchableOpacity className="bg-[#150E7C] w-[70%] h-[40px] flex justify-center items-center rounded-[10px]" onPress={() => deleteData(item.id)}>
           <Text
             style={{ fontSize: scaledFontSize("text-base") }}
             className="text-white font-normal text-base"
@@ -165,7 +174,7 @@ export default function PageSimpan() {
       <View className="w-full h-[78vh] px-[3%] flex mt-4">
         {/* start of scan tersimpan container */}
         <FlatList
-          data={dummyHasilSimpan}
+          data={dataObat} // Ini Data Diambil Dari Fetch Data ( Disimpen di dalam dataObat)
           renderItem={renderItem}
           keyExtractor={(item) => item.id}
         />

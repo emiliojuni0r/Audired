@@ -11,11 +11,10 @@ import * as WebBrowser from "expo-web-browser";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/context/auth";
 
-import { getAuth, signInWithCredential, GoogleAuthProvider } from "firebase/auth";
+import { signInWithCredential, GoogleAuthProvider } from "firebase/auth";
 import axios from "axios";
 import { auth } from "@/firebase";
 import { saveItem } from '../context/SecureStorage';
-import * as SecureStore from "expo-secure-store";
 import { router } from "expo-router";
 
 WebBrowser.maybeCompleteAuthSession();
