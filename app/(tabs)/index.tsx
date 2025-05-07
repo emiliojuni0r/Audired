@@ -3,14 +3,16 @@ import { Link, useNavigation, useRouter } from "expo-router";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import React from "react";
 import * as Speech from "expo-speech";
-import { Float } from "react-native/Libraries/Types/CodegenTypes";
+import { Double, Float } from "react-native/Libraries/Types/CodegenTypes";
+import { useSpeechRate } from "@/context/SpeechRateContext";
 
 // home page
 export default function Index() {
   const { scaledFontSize } = useFontSize();
+  const { speechRate } = useSpeechRate();
   const router = useRouter();
-  const speak = (text: string, languageCode = "id-ID", speakSpeed : Float) => {
-    Speech.speak(text, { language: languageCode, rate : speakSpeed });
+  const speak = (text: string, languageCode = "id-ID", speakSpeed: number) => {
+    Speech.speak(text, { language: languageCode, rate: speakSpeed });
   };
 
   const screenText = "Kamu sekarang berada di Beranda.";
@@ -18,7 +20,6 @@ export default function Index() {
   React.useEffect(() => {
     speak(screenText, "id-ID", 1.0); // Speak when the component mounts
     return () => {
-
       Speech.stop();
     };
   }, []);
@@ -31,7 +32,7 @@ export default function Index() {
           <TouchableOpacity
             onPress={() => {
               router.push("/(tabs)/reminder");
-              speak("Kamu mengakses halaman Pengingat", "id-ID", 1.0);
+              speak("Kamu mengakses halaman Pengingat", "id-ID", speechRate);
             }}
             className="w-fit h-fit flex flex-col justify-center items-center"
           >
@@ -52,7 +53,7 @@ export default function Index() {
           <TouchableOpacity
             onPress={() => {
               router.push("/(tabs)/labelScanner");
-              speak("Kamu mengakses halaman Baca label", "id-ID", 1);
+              speak("Kamu mengakses halaman Baca label", "id-ID", speechRate);
             }}
             className="w-fit h-fit flex flex-col justify-center items-center"
           >
@@ -71,9 +72,12 @@ export default function Index() {
             </Text>
           </TouchableOpacity>
         </View>
-        <View className="w-full flex flex-row justify-between">
+        <View className="w-full flex flex-row justify-between mt-[2%]">
           <TouchableOpacity
-            onPress={() => {router.push("/(tabs)/history"); speak("Kamu mengakses halaman riwayat", "id-ID", 1.0)}}
+            onPress={() => {
+              router.push("/(tabs)/history");
+              speak("Kamu mengakses halaman riwayat", "id-ID", speechRate);
+            }}
             className="w-fit h-fit flex flex-col justify-center items-center"
           >
             <View className="border w-[40vw] h-[40vw] border-[#1359A0] rounded-full text-center">
@@ -110,10 +114,6 @@ export default function Index() {
           </TouchableOpacity>
         </View>
       </View>
-
-      <Link className="mt-20" href={"/login"}>
-        <Text>preview login page..ini nanti di delete</Text>
-      </Link>
     </View>
   );
 }
