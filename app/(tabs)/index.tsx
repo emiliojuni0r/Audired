@@ -27,16 +27,16 @@ export default function Index() {
     try {
       await auth.signOut();
       await logout();
-      speak("Kamu telah logout", "id-ID", 1.0);
+      speak("Kamu telah logout", "id-ID", speechRate);
       router.replace("/login");
     } catch (error) {
       console.error("Logout error:", error);
-      speak("Terjadi kesalahan saat logout", "id-ID", 1.0);
+      speak("Terjadi kesalahan saat logout", "id-ID", speechRate);
     }
   };
 
   React.useEffect(() => {
-    speak(screenText, "id-ID", 1.0); // Speak when the component mounts
+    speak(screenText, "id-ID", speechRate); // Speak when the component mounts
     return () => {
       Speech.stop();
     };

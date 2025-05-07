@@ -51,11 +51,12 @@
         "origin": false
       },
       "eas": {
-        "projectId": "53eb3d06-ff8d-461a-a8ce-539864ebd285"
+        "projectId": "5b291872-be80-4e90-b337-b849955315db"
       }
     },
     "updates": {
       "url": "https://u.expo.dev/53eb3d06-ff8d-461a-a8ce-539864ebd285"
-    }
+    },
+    "owner": "emiliojunior"
   }
 }
