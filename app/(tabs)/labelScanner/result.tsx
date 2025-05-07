@@ -105,7 +105,7 @@ export default function LabelScannerResult() {
         {parsedResult ? (
           <View>
             <View className="w-[90%] h-[0.1px] border-t border-[#150E7C]" />
-            <Text className="text-[#150E7C] my-2">
+            <Text className="text-[#150E7C] my-2 mx-auto">
               Nama Obat :{" "}
               {parsedResult.data.namaObat ?? parsedResult.data["Nama Obat"]}
             </Text>

@@ -2,7 +2,7 @@ import { Fontisto } from "@expo/vector-icons";
 import { CameraCapturedPicture } from "expo-camera";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
-import { Alert } from "react-native";
+import { Alert, Platform } from "react-native";
 import {
   Image,
   StyleSheet,
@@ -14,13 +14,12 @@ import {
 import * as Speech from "expo-speech";
 import { auth } from "../firebase";
 
-
 export default function PhotoPreviewSection({
   photo,
   handleRetakePhoto,
 }: {
   photo: CameraCapturedPicture;
-  scannedPhoto? : JSON;
+  scannedPhoto?: JSON;
   handleRetakePhoto: () => void;
 }) {
   const router = useRouter();
@@ -33,7 +32,7 @@ export default function PhotoPreviewSection({
   const handleButtonPotretUlang = () => {
     speak("Potret Ulang gambar");
     handleRetakePhoto();
-  }
+  };
 
   // const handleButtonLihatHasil = () => {
   //   router.push("/(tabs)/labelScanner/result");
@@ -48,30 +47,33 @@ export default function PhotoPreviewSection({
 
       const user = auth.currentUser;
       const token = await user?.getIdToken();
-  
+
       if (!photo.base64) {
         console.error("Base64 image data is missing");
         return;
       }
 
-      console.log("processing image from backend")
+      console.log("processing image from backend");
       const imageData = photo.base64;
       const language = "id";
-  
-      const response = await fetch("https://audired-820e0.et.r.appspot.com/api/process/scan-medication", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          imageData,
-          language,
-        }),
-      });
-  
+
+      const response = await fetch(
+        "https://audired-820e0.et.r.appspot.com/api/process/scan-medication",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            imageData,
+            language,
+          }),
+        }
+      );
+
       const data = await response.json();
-  
+
       if (response.ok) {
         console.log("Scan result:", JSON.stringify(data));
         router.push({
@@ -86,35 +88,40 @@ export default function PhotoPreviewSection({
       }
     } catch (error) {
       console.error("Error during label reading:", error);
-      Alert.alert("Scan Failed", "An error occurred while processing the label.");
+      Alert.alert(
+        "Scan Failed",
+        "An error occurred while processing the label."
+      );
     } finally {
       setLoading(false);
       handleRetakePhoto();
     }
   };
-  
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.box}>
         <Image
           style={styles.previewContainer}
-          source={{ uri: photo.base64 }} // this thing work as charm on WEB 
-          // source={{ uri: "data:image/jpg;base64," + photo.base64 }} // Ini mungkin bisa nya buat Android + IOS doang kali ya?
+          source={{
+            uri: Platform.OS == "web"
+              ? photo.base64
+              : "data:image/jpg;base64," + photo.base64,
+          }}
         />
       </View>
 
       <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.button} onPress={handleButtonPotretUlang}>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={handleButtonPotretUlang}
+        >
           {/* <Fontisto name="trash" size={36} color="black" /> */}
           <Text className="text-white font-extrabold text-2xl">
             Potret Ulang
           </Text>
         </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={sendToBackend}
-        >
+        <TouchableOpacity style={styles.button} onPress={sendToBackend}>
           {/* <Fontisto name="trash" size={36} color="black" /> */}
           <Text className="text-white font-extrabold text-2xl">
             Lihat Hasil
