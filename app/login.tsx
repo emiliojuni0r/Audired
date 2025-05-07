@@ -10,15 +10,12 @@ import * as Google from "expo-auth-session/providers/google";
 import * as WebBrowser from "expo-web-browser";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/context/auth";
-import {
-  getAuth,
-  signInWithCredential,
-  GoogleAuthProvider,
-} from "firebase/auth";
-import * as SecureStore from "expo-secure-store";
+
+import { getAuth, signInWithCredential, GoogleAuthProvider } from "firebase/auth";
 import axios from "axios";
 import { auth } from "@/firebase";
-import { saveItem } from "../context/SecureStorage"; // Adjust path as needed
+import { saveItem } from '../context/SecureStorage';
+import * as SecureStore from "expo-secure-store";
 import { router } from "expo-router";
 
 WebBrowser.maybeCompleteAuthSession();

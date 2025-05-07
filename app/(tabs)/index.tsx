@@ -3,19 +3,37 @@ import { Link, useNavigation, useRouter } from "expo-router";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import React from "react";
 import * as Speech from "expo-speech";
-import { Double, Float } from "react-native/Libraries/Types/CodegenTypes";
+import { Float } from "react-native/Libraries/Types/CodegenTypes";
+import {auth} from "@/firebase";  
+import { useAuth } from "@/context/auth";
 import { useSpeechRate } from "@/context/SpeechRateContext";
+
 
 // home page
 export default function Index() {
   const { scaledFontSize } = useFontSize();
   const { speechRate } = useSpeechRate();
   const router = useRouter();
+  const { logout } = useAuth(); // ambil fungsi logout dari context
+
   const speak = (text: string, languageCode = "id-ID", speakSpeed: number) => {
     Speech.speak(text, { language: languageCode, rate: speakSpeed });
   };
 
   const screenText = "Kamu sekarang berada di Beranda.";
+
+  
+  const handeLogout = async () =>{
+    try {
+      await auth.signOut();
+      await logout();
+      speak("Kamu telah logout", "id-ID", 1.0);
+      router.replace("/login");
+    } catch (error) {
+      console.error("Logout error:", error);
+      speak("Terjadi kesalahan saat logout", "id-ID", 1.0);
+    }
+  };
 
   React.useEffect(() => {
     speak(screenText, "id-ID", 1.0); // Speak when the component mounts
@@ -114,6 +132,15 @@ export default function Index() {
           </TouchableOpacity>
         </View>
       </View>
+
+
+      <Link className="mt-20" href={"/login"}>
+        <Text>preview login page..ini nanti di delete</Text>
+      </Link>
+      <TouchableOpacity className="mt-20" onPress={handeLogout}>
+        <Text> logout page..ini nanti di delete</Text>
+      </TouchableOpacity>
+
     </View>
   );
 }
