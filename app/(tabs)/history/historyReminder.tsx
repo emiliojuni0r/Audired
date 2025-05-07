@@ -4,7 +4,7 @@ import * as Speech from "expo-speech";
 import { useFontSize } from "@/context/FontSizeContext";
 import { Ionicons } from "@expo/vector-icons";
 
-export default function HistoryScreen() {
+export default function historyReminder() {
   const speak = (text: string, languageCode = "id-ID") => {
     Speech.speak(text, { language: languageCode });
   };
@@ -28,22 +28,18 @@ export default function HistoryScreen() {
         </Text>
       </TouchableOpacity>
 
-      <Text className="text-black text-2xl font-semibold">Lihat riwayat</Text>
+      {/* titlle */}
+      <Text className="font-semibold text-2xl mt-2.5 mx-auto text-[#150E7C]">
+        Riwayat pengingat jadwal obat
+      </Text>
 
-      <TouchableOpacity
-        onPress={() => {
-          router.push("/(tabs)/history/historyReminder");
-        }}
-        className="w-[80%] h-[10vh] bg-[#150E7C] rounded-[20px] flex justify-center items-center mt-[11%]"
-      >
-        <Text className="text-white font-extrabold text-xl">
-          Pengingat jadwal obat
-        </Text>
-      </TouchableOpacity>
+      {/* start of list riwayat pengingat */}
+      <View className="w-full h-[78vh] px-[3%] flex mt-4">
+        {/* container */}
+        <View>
 
-      <TouchableOpacity className="w-[80%] h-[10vh] bg-[#150E7C] rounded-[20px] flex justify-center items-center mt-[8%]">
-        <Text className="text-white font-extrabold text-xl">Baca label</Text>
-      </TouchableOpacity>
+        </View>
+      </View>
     </View>
   );
 }
