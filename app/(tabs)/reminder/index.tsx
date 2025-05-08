@@ -11,23 +11,23 @@ export default function ReminderScreen() {
   const { scaledFontSize } = useFontSize();
   const { speechRate } = useSpeechRate();
   const isSpeaking = useRef(false); // Ref untuk melacak status TTS
-  
-    const speak = (text: string, languageCode = "id-ID", speakSpeed: number) => {
-      if (isSpeaking.current) {
-        Speech.stop(); // Batalkan TTS yang sedang berjalan
-      }
-      isSpeaking.current = true;
-      Speech.speak(text, {
-        language: languageCode,
-        rate: speakSpeed,
-        onStopped: () => {
-          isSpeaking.current = false; // Reset status setelah dihentikan
-        },
-        onDone: () => {
-          isSpeaking.current = false; // Reset status setelah selesai
-        },
-      });
-    };
+
+  const speak = (text: string, languageCode = "id-ID", speakSpeed: number) => {
+    if (isSpeaking.current) {
+      Speech.stop(); // Batalkan TTS yang sedang berjalan
+    }
+    isSpeaking.current = true;
+    Speech.speak(text, {
+      language: languageCode,
+      rate: speakSpeed,
+      onStopped: () => {
+        isSpeaking.current = false; // Reset status setelah dihentikan
+      },
+      onDone: () => {
+        isSpeaking.current = false; // Reset status setelah selesai
+      },
+    });
+  };
 
   const [lihatDetail, SetLihatDetail] = useState(false);
   const [isActive, setIsActive] = useState(false);
@@ -69,7 +69,13 @@ export default function ReminderScreen() {
       </TouchableOpacity>
 
       {/* button untuk nambah jadwal */}
-      <TouchableOpacity className="w-[80%] h-[60px] bg-[#150E7C] rounded-[20px] flex items-center mx-auto mt-3">
+      <TouchableOpacity
+        onPress={() => {
+          router.navigate("/(tabs)/reminder/addReminder");
+          speak("Menambahkan Jadwal", "id-ID", speechRate);
+        }}
+        className="w-[80%] h-[60px] bg-[#150E7C] rounded-[20px] flex items-center mx-auto mt-3"
+      >
         <Text
           style={{ fontSize: scaledFontSize("text-2xl") }}
           className="my-auto text-2xl text-white font-bold"
