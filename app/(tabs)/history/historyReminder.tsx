@@ -9,7 +9,8 @@ import { router, useFocusEffect } from "expo-router";
 import * as Speech from "expo-speech";
 import { useFontSize } from "@/context/FontSizeContext";
 import { Ionicons } from "@expo/vector-icons";
-import { useState } from "react";
+import { useRef, useState } from "react";
+import { useSpeechRate } from "@/context/SpeechRateContext";
 
 // Interface untuk item riwayat pengingat
 interface RiwayatPengingatItem {
@@ -73,10 +74,26 @@ const dummyRiwayatPengingat: RiwayatPengingatItem[] = [
 ];
 
 export default function historyReminder() {
-  const speak = (text: string, languageCode = "id-ID") => {
-    Speech.speak(text, { language: languageCode });
-  };
+  const isSpeaking = useRef(false); // Ref untuk melacak status TTS
+
+  const speak = (text: string, languageCode = "id-ID", speakSpeed: number) => {
+      if (isSpeaking.current) {
+        Speech.stop(); // Batalkan TTS yang sedang berjalan
+      }
+      isSpeaking.current = true;
+      Speech.speak(text, {
+        language: languageCode,
+        rate: speakSpeed,
+        onStopped: () => {
+          isSpeaking.current = false; // Reset status setelah dihentikan
+        },
+        onDone: () => {
+          isSpeaking.current = false; // Reset status setelah selesai
+        },
+      });
+    };
   const { scaledFontSize } = useFontSize();
+  const {speechRate} = useSpeechRate();
   const [lihatDetailId, setLihatDetailId] = useState<string | null>(null);
   const [activeItemId, setActiveItemId] = useState<{ [key: string]: boolean }>(
     {}
@@ -205,7 +222,7 @@ export default function historyReminder() {
         className="flex flex-row w-fit h-fit items-center mr-auto"
         onPress={() => {
           router.back();
-          speak("Kembali ke Home Page");
+          speak("Kembali ke Home Page", "id-ID", speechRate);
         }}
       >
         <Ionicons name="arrow-back" size={25} />

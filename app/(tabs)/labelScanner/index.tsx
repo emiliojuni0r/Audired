@@ -3,26 +3,43 @@ import { router, useFocusEffect } from "expo-router";
 import * as Speech from "expo-speech";
 import { useFontSize } from "@/context/FontSizeContext";
 import { Ionicons } from "@expo/vector-icons";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Camera from "@/components/camera";
+import { useSpeechRate } from "@/context/SpeechRateContext";
 
 export default function LabelScanner() {
   const { scaledFontSize } = useFontSize();
-  const speak = (text: string, languageCode = "id-ID") => {
-    Speech.speak(text, { language: languageCode });
+  const { speechRate } = useSpeechRate();
+  const isSpeaking = useRef(false); // Ref untuk melacak status TTS
+
+  const speak = (text: string, languageCode = "id-ID", speakSpeed: number) => {
+    if (isSpeaking.current) {
+      Speech.stop(); // Batalkan TTS yang sedang berjalan
+    }
+    isSpeaking.current = true;
+    Speech.speak(text, {
+      language: languageCode,
+      rate: speakSpeed,
+      onStopped: () => {
+        isSpeaking.current = false; // Reset status setelah dihentikan
+      },
+      onDone: () => {
+        isSpeaking.current = false; // Reset status setelah selesai
+      },
+    });
   };
 
   const [modeTakePicture, setModeTakePicture] = useState(false);
 
   const panduanSpeech =
-    // "Langkah menggunakan fitur scan, 1. Tekan tombol mulai dibawah panduan,2. Arahkan obat atau label ke kamera 3. Potret dengan menekan tombol pada kamera 4. Tunggu beberapa saat sampai muncul hasil 5. Dengan fitur text-to-speech, dapat membacakan hasil scan 6. Hasil dapat dilihat kembali di riwayat dan bisa juga disimpan ke halaman simpan. Note Jika hasil scan error, coba ulangi kembali proses dari awal dengan tambahan tap bagian tengah agar kamera dapat fokus lalu tekan tombol potret";
-    " ini panduan dummy dummy dummy";
+    "Langkah menggunakan fitur scan, 1. Tekan tombol mulai dibawah panduan,2. Arahkan obat atau label ke kamera 3. Potret dengan menekan tombol pada kamera 4. Tunggu beberapa saat sampai muncul hasil 5. Dengan fitur text-to-speech, dapat membacakan hasil scan 6. Hasil dapat dilihat kembali di riwayat dan bisa juga disimpan ke halaman simpan. Note Jika hasil scan error, coba ulangi kembali proses dari awal dengan tambahan tap bagian tengah agar kamera dapat fokus lalu tekan tombol potret";
+  // " ini panduan dummy dummy dummy";
   const speechDelay = 3000;
 
   useEffect(() => {
     // This effect will only run once after the initial render
     const timeoutId = setTimeout(() => {
-      speak(panduanSpeech, 'id-ID'); // Setting language to Indonesian (Indonesia) as per your location
+      speak(panduanSpeech, "id-ID", speechRate); // Setting language to Indonesian (Indonesia) as per your location
     }, speechDelay);
 
     return () => {
@@ -38,7 +55,7 @@ export default function LabelScanner() {
         className="flex flex-row w-fit h-fit items-center mr-auto"
         onPress={() => {
           router.back();
-          speak("Kembali ke Home Page");
+          speak("Kembali ke Home Page", "id-ID", speechRate);
         }}
       >
         <Ionicons name="arrow-back" size={25} />
@@ -127,7 +144,7 @@ export default function LabelScanner() {
           <TouchableOpacity
             onPress={() => {
               setModeTakePicture(true);
-              speak("Memulai Potret gambar", "id-ID");
+              speak("Memulai Potret gambar", "id-ID", speechRate);
             }}
             className="w-[85%] h-[10%] bg-[#150E7C] rounded-[20px] my-auto flex justify-center items-center"
           >
