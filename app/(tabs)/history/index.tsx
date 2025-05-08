@@ -3,12 +3,14 @@ import { router, useFocusEffect } from "expo-router";
 import * as Speech from "expo-speech";
 import { useFontSize } from "@/context/FontSizeContext";
 import { Ionicons } from "@expo/vector-icons";
+import { useSpeechRate } from "@/context/SpeechRateContext";
 
 export default function HistoryScreen() {
-  const speak = (text: string, languageCode = "id-ID") => {
-    Speech.speak(text, { language: languageCode });
+  const speak = (text: string, languageCode = "id-ID", speakSpeed: number) => {
+    Speech.speak(text, { language: languageCode, rate: speakSpeed });
   };
   const { scaledFontSize } = useFontSize();
+  const { speechRate } = useSpeechRate();
   return (
     <View className="flex flex-1 bg-white items-center p-2">
       {/* button back */}
@@ -16,7 +18,7 @@ export default function HistoryScreen() {
         className="flex flex-row w-fit h-fit items-center mr-auto"
         onPress={() => {
           router.back();
-          speak("Kembali ke Home Page");
+          speak("Kembali ke Home Page", "id-ID", speechRate);
         }}
       >
         <Ionicons name="arrow-back" size={25} />
@@ -33,6 +35,7 @@ export default function HistoryScreen() {
       <TouchableOpacity
         onPress={() => {
           router.push("/(tabs)/history/historyReminder");
+          speak("Riwayat Pengingat Jadwal obat", "id-ID", speechRate);
         }}
         className="w-[80%] h-[10vh] bg-[#150E7C] rounded-[20px] flex justify-center items-center mt-[11%]"
       >
@@ -41,7 +44,13 @@ export default function HistoryScreen() {
         </Text>
       </TouchableOpacity>
 
-      <TouchableOpacity className="w-[80%] h-[10vh] bg-[#150E7C] rounded-[20px] flex justify-center items-center mt-[8%]">
+      <TouchableOpacity
+        onPress={() => {
+          router.push("/(tabs)/history/historyScan");
+          speak("Riwayat Scan label", "id-ID", speechRate);
+        }}
+        className="w-[80%] h-[10vh] bg-[#150E7C] rounded-[20px] flex justify-center items-center mt-[8%]"
+      >
         <Text className="text-white font-extrabold text-xl">Baca label</Text>
       </TouchableOpacity>
     </View>

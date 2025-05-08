@@ -62,6 +62,7 @@ export default function TabsLayout() {
         <Tabs.Screen name="labelScanner/result" options={{href: null, headerShown: false}} /> // history ga nambah di bottom nav
         <Tabs.Screen name="simpan/index" options={{href: null, headerShown: false}} /> // history ga nambah di bottom nav
         <Tabs.Screen name="history/historyReminder" options={{href: null, headerShown: false}} /> // history ga nambah di bottom na
+        <Tabs.Screen name="history/historyScan" options={{href: null, headerShown: false}} /> // history ga nambah di bottom nav
       </Tabs>
     </>
   );
