@@ -9,79 +9,78 @@ import * as Speech from "expo-speech";
 import { useFontSize } from "@/context/FontSizeContext";
 import { useSpeechRate } from "@/context/SpeechRateContext";
 import { useRouter } from "expo-router";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { getItem, saveItem } from "@/context/SecureStorage";
 
 // Interface untuk item riwayat scan
-interface RiwayatScanItem {
-  id: string;
-  namaObat: string;
-  jenisObat?: string;
-  kekuatan?: string;
-  indikasi?: string;
-  dosis?: string;
-  dikonsumsi?: string;
-  tanggalKadaluarsa?: string;
-  petunjukPenyimpanan?: string;
-  deskripsi?: string;
-  isSaved: boolean;
-}
-
-// Data dummy untuk riwayat scan label
-const dummyRiwayatScan: RiwayatScanItem[] = [
-  {
-    id: "1",
-    namaObat: "Panadol",
-    jenisObat: "Tablet",
-    kekuatan: "500 mg",
-    indikasi: "Demam",
-    dosis: "3 kali sehari sampai sembuh",
-    dikonsumsi: "Sesudah Makan",
-    tanggalKadaluarsa: "Tidak ditemukan",
-    petunjukPenyimpanan: "Tidak ditemukan",
-    deskripsi:
-      "Panadol digunakan untuk meredakan demam dan nyeri ringan hingga sedang.",
-    isSaved: false,
-  },
-  {
-    id: "2",
-    namaObat: "Amoxicillin",
-    jenisObat: "Kapsul",
-    kekuatan: "500 mg",
-    indikasi: "Infeksi bakteri",
-    dosis: "3 kali sehari, 1 kapsul",
-    dikonsumsi: "Sesuai petunjuk dokter",
-    tanggalKadaluarsa: "2026-03-15",
-    petunjukPenyimpanan: "Simpan di tempat kering dan sejuk",
-    deskripsi:
-      "Amoxicillin adalah antibiotik penisilin untuk mengobati berbagai infeksi bakteri.",
-    isSaved: true,
-  },
-  {
-    id: "3",
-    namaObat: "obat cihuy test",
-    jenisObat: "Kapsul",
-    kekuatan: "500 mg",
-    indikasi: "Infeksi bakteri",
-    dosis: "3 kali sehari, 1 kapsul",
-    dikonsumsi: "Sesuai petunjuk dokter",
-    tanggalKadaluarsa: "2026-03-15",
-    petunjukPenyimpanan: "Simpan di tempat kering dan sejuk",
-    deskripsi:
-      "Amoxicillin adalah antibiotik penisilin untuk mengobati berbagai infeksi bakteri.",
-    isSaved: true,
-  },
-  // Tambahkan data dummy lainnya di sini
-];
+export interface RiwayatScanItem {
+  id : string,
+  namaObat: string,
+  jenisObat: string,
+  kekuatanKonsentrasi: string,
+  indikasiObat: string,
+  aturanPakai: string,
+  peringatanPerhatian : string,
+  tanggalKadaluarsa: string,
+  petunjukPenyimpanan: string,
+  deskripsiPenggunaanObat: string,
+  isSaved?: boolean;
+};
 
 export default function historyScanPage() {
   const { scaledFontSize } = useFontSize();
   const { speechRate } = useSpeechRate();
   const router = useRouter();
 
+  const [riwayatData, setRiwayatData] = useState<RiwayatScanItem[]>([]);
   const [expandedItemId, setExpandedItemId] = useState<string | null>(null);
   const [savedItemIds, setSavedItemIds] = useState<{ [key: string]: boolean }>(
     {}
   );
+
+  useEffect(() => {
+    getRiwayatScan();
+  }, []);
+  
+
+  // Ngambil Data
+  const getRiwayatScan = async () => {
+    try {
+      const storedData = await getItem("riwayatScan");
+      console.log("Stored Riwayat:", storedData); // Debug line
+  
+      if (storedData) {
+        const parsedData = JSON.parse(storedData);
+  
+        // Pastikan data yang disimpen dari Hasil Scan Label dalam bentuk array dengan Json String dan lakukan normalisasi per item
+        const normalizedData: RiwayatScanItem[] = parsedData.map((item: any, index: number) => ({
+          id: `${index}-${item["Nama Obat"]}`,
+          namaObat: item["Nama Obat"] || "",
+          bahanAktif: item["Bahan Aktif"] || "",
+          jenisObat: item["Jenis Obat"] || "",
+          kekuatanKonsentrasi: item["Kekuatan/Konsentrasi"] || "",
+          aturanPakai: item["Aturan Pakai"] || "",
+          tanggalKadaluarsa: item["Tanggal Kadaluarsa"] || "",
+          petunjukPenyimpanan: item["Petunjuk Penyimpanan"] || "",
+          peringatanPerhatian: item["Peringatan/Perhatian"] || "",
+          produsen: item["Produsen"] || "",
+          deskripsiPenggunaanObat: item["Deskripsi Penggunaan Obat"] || "",
+        }));
+  
+        setRiwayatData(normalizedData);
+      }
+    } catch (error) {
+      console.error("Gagal mengambil data riwayat:", error);
+    }
+  };
+  
+
+  const deleteRiwayat = (id : string) =>{
+    const filtered = riwayatData.filter(item => item.id !==id);
+    setRiwayatData(filtered);
+
+    saveItem("riwayatScan",JSON.stringify(filtered));
+  }
 
   const isSpeaking = useRef(false); // Ref untuk melacak status TTS
 
@@ -118,15 +117,14 @@ export default function historyScanPage() {
       if (!isDetailVisible) {
         let detailText = `Nama obat: ${item.namaObat}, `;
         if (item.jenisObat) detailText += `Jenis obat: ${item.jenisObat}, `;
-        if (item.kekuatan) detailText += `Kekuatan: ${item.kekuatan}, `;
-        if (item.indikasi) detailText += `Indikasi: ${item.indikasi}, `;
-        if (item.dosis) detailText += `Dosis: ${item.dosis}, `;
-        if (item.dikonsumsi) detailText += `Dikonsumsi: ${item.dikonsumsi}, `;
+        if (item.kekuatanKonsentrasi) detailText += `Kekuatan: ${item.kekuatanKonsentrasi}, `;
+        if (item.indikasiObat) detailText += `Indikasi: ${item.indikasiObat}, `;
+        if (item.aturanPakai) detailText += `Aturan Pakai: ${item.aturanPakai}, `;
         if (item.tanggalKadaluarsa)
           detailText += `Tanggal Kadaluarsa: ${item.tanggalKadaluarsa}, `;
         if (item.petunjukPenyimpanan)
           detailText += `Petunjuk Penyimpanan: ${item.petunjukPenyimpanan}, `;
-        if (item.deskripsi) detailText += `Deskripsi: ${item.deskripsi}`;
+        if (item.deskripsiPenggunaanObat) detailText += `Deskripsi: ${item.deskripsiPenggunaanObat}`;
         speak(detailText, "id-ID", speechRate);
       } else {
         speak(
@@ -139,6 +137,8 @@ export default function historyScanPage() {
 
     const handleSimpanPress = () => {
       setSavedItemIds({ ...savedItemIds, [item.id]: !isCurrentlySaved });
+      // Belum Menambahkan logic Simpan Ke Database
+
       speak(
         isCurrentlySaved
           ? `${item.namaObat} sudah dihapus dari penyimpanan`
@@ -149,7 +149,7 @@ export default function historyScanPage() {
     };
 
     const handleHapusPress = () => {
-      // Tambahkan logika penghapusan di sini
+      deleteRiwayat(item.id);
       speak(
         `Menghapus riwayat scan untuk ${item.namaObat}`,
         "id-ID",
@@ -171,21 +171,20 @@ export default function historyScanPage() {
           } w-[90%] h-fit justify-start items-start content-start my-2`}
         >
           {item.jenisObat && <Text>Jenis obat: {item.jenisObat}</Text>}
-          {item.kekuatan && <Text>Kekuatan/Konsentrasi: {item.kekuatan}</Text>}
-          {item.indikasi && <Text>Indikasi obat: {item.indikasi}</Text>}
-          {item.dosis && <Text>Dosis: {item.dosis}</Text>}
-          {item.dikonsumsi && <Text>Dikonsumsi: {item.dikonsumsi}</Text>}
+          {item.kekuatanKonsentrasi && <Text>Kekuatan/Konsentrasi: {item.kekuatanKonsentrasi}</Text>}
+          {item.indikasiObat && <Text>Indikasi obat: {item.indikasiObat}</Text>}
+          {item.aturanPakai && <Text>Dosis: {item.aturanPakai}</Text>}
           {item.tanggalKadaluarsa && (
             <Text>Tanggal Kadaluarsa: {item.tanggalKadaluarsa}</Text>
           )}
           {item.petunjukPenyimpanan && (
             <Text>Petunjuk Penyimpanan: {item.petunjukPenyimpanan}</Text>
           )}
-          {item.deskripsi && (
+          {item.deskripsiPenggunaanObat && (
             <>
               <View className="w-[100%] h-[0.1px] border-t border-[#150E7C] my-2" />
               <Text>Deskripsi:</Text>
-              <Text>{item.deskripsi}</Text>
+              <Text>{item.deskripsiPenggunaanObat}</Text>
               <View className="w-[100%] h-[0.1px] border-t border-[#150E7C] mt-1" />
             </>
           )}
@@ -262,7 +261,7 @@ export default function historyScanPage() {
       </Text>
       <View className="w-full h-[78vh] flex items-center mt-4">
         <FlatList
-          data={dummyRiwayatScan}
+          data={riwayatData}
           renderItem={renderItem}
           keyExtractor={(item) => item.id}
         />
