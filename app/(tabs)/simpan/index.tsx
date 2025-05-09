@@ -13,12 +13,12 @@ import { auth } from "@/firebase";
 // Ini Aku Update bang nyesuain Data Object Medication dari BE
 export interface hasilSimpan {
     id : string,
+    bahanAktif : string,
     namaObat: string,
     jenisObat: string,
     kekuatanKonsentrasi: string,
     indikasiObat: string,
-    pemakaianDalamSehari: string,
-    waktuKonsumsi: string,
+    aturanPakai: string,
     peringatanPerhatian : string,
     tanggalKadaluarsa: string,
     petunjukPenyimpanan: string,
@@ -105,10 +105,10 @@ export default function PageSimpan() {
         } w-[90%] h-fit justify-start items-start content-start my-2`}
       >
         <Text>Jenis obat: {item.jenisObat}</Text>
+        <Text>Bahan Aktif: {item.bahanAktif}</Text>
         <Text>Kekuatan/Konsentrasi: {item.kekuatanKonsentrasi}</Text>
         <Text>Indikasi obat: {item.indikasiObat}</Text>
-        <Text>Dosis: {item.pemakaianDalamSehari}</Text>
-        <Text>Dikonsumsi: {item.waktuKonsumsi}</Text>
+        <Text>Aturan Pakai: {item.aturanPakai}</Text>
         <Text>Tanggal Kadaluarsa: {item.tanggalKadaluarsa}</Text>
         <Text>Petunjuk Penyimpanan: {item.petunjukPenyimpanan}</Text>
         <View className="w-[100%] h-[0.1px] border-t border-[#150E7C] my-2" />

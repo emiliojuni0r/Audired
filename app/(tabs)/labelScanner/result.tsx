@@ -3,8 +3,9 @@ import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
 import * as Speech from "expo-speech";
 import { useFontSize } from "@/context/FontSizeContext";
 import { Ionicons } from "@expo/vector-icons";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { auth } from "../../../firebase";
+import { saveItem, getItem } from "@/context/SecureStorage";
 
 
 export default function LabelScannerResult() {
@@ -14,6 +15,10 @@ export default function LabelScannerResult() {
   const speak = (text: string, languageCode = "id-ID") => {
     Speech.speak(text, { language: languageCode });
   };
+
+  useEffect(() => {
+    saveKeRiwayat();
+  }, []);
 
   // Try parsing result from params
   let parsedResult = null;
@@ -64,7 +69,7 @@ export default function LabelScannerResult() {
           body: JSON.stringify(parsedResult.data)
         }
       );
-  
+
       console.log("Sukses simpan:", response.json());
       console.log("🚀 Data yang dikirim:", parsedResult.data);
       speak("Hasil berhasil disimpan.");
@@ -72,6 +77,24 @@ export default function LabelScannerResult() {
     } catch (err) {
       console.error("Gagal menyimpan:", err);
       speak("Gagal menyimpan hasil.");
+    }
+  };
+
+  const RIWAYAT_SCAN_LABEL = "riwayatScan"
+  // Simpan Ke Riwayat
+  const saveKeRiwayat = async () => {
+    try {
+      const existing = await getItem(RIWAYAT_SCAN_LABEL);
+      let history = [];
+  
+      if (existing) {
+        history = JSON.parse(existing);
+      }
+  
+      history.unshift(parsedResult.data); // tambahkan ke awal
+      await saveItem(RIWAYAT_SCAN_LABEL, JSON.stringify(history));
+    } catch (error) {
+      console.log("Gagal Menyimpan Ke Riwayat:", error);
     }
   };
   
@@ -143,9 +166,9 @@ export default function LabelScannerResult() {
                   "Tidak Ditemukan"}
               </Text>
               <Text>
-                Waktu Konsumsi:{" "}
-                {parsedResult.data.waktuKonsumsi ??
-                  parsedResult.data["Waktu Konsumsi"] ??
+                Aturan Pakai:{" "}
+                {parsedResult.data.aturanPakai ??
+                  parsedResult.data["Aturan Pakai"] ??
                   "Tidak Ditemukan"}
               </Text>
               <Text>
