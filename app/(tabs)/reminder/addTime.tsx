@@ -95,9 +95,9 @@ import {
   Pressable,
   StyleSheet,
   TouchableOpacity,
+  Alert,
 } from "react-native";
 import * as Notifications from "expo-notifications";
-// import AsyncStorage from "@react-native-async-storage/async-storage";
 import {saveItem, getItem} from "@/context/SecureStorage"
 import { router, useLocalSearchParams } from "expo-router";
 import { useFontSize } from "@/context/FontSizeContext";
@@ -105,6 +105,7 @@ import { useSpeechRate } from "@/context/SpeechRateContext";
 import { useRef } from "react";
 import * as Speech from "expo-speech";
 import { Ionicons } from "@expo/vector-icons";
+import { scheduleMultipleReminders } from "@/context/ScheduleNotifications";
 
 export default function AddReminderTimePage() {
   const { scaledFontSize } = useFontSize();
@@ -129,10 +130,10 @@ export default function AddReminderTimePage() {
   };
 
   const { namaObat, jenisObat, dosisObat } = useLocalSearchParams();
-  const [intervalHour, setIntervalHour] = useState("00");
-  const [intervalMinute, setIntervalMinute] = useState("00");
-  const [startHour, setStartHour] = useState("08");
-  const [startMinute, setStartMinute] = useState("00");
+  const [intervalHour, setIntervalHour] = useState(" ");
+  const [intervalMinute, setIntervalMinute] = useState(" ");
+  const [startHour, setStartHour] = useState(" ");
+  const [startMinute, setStartMinute] = useState(" ");
   const [timesPerDay, setTimesPerDay] = useState("1"); // Default to 1
 
   const cekRincian = () => {
@@ -153,34 +154,30 @@ export default function AddReminderTimePage() {
   };
 
   const tambahDanKembali = async () => {
-    const intervalTotalMenit =
-      parseInt(intervalHour) * 60 + parseInt(intervalMinute);
+    const intervalTotalMenit = parseInt(intervalHour) * 60 + parseInt(intervalMinute);
     const startTime = new Date();
     startTime.setHours(parseInt(startHour));
     startTime.setMinutes(parseInt(startMinute));
     startTime.setSeconds(0);
     startTime.setMilliseconds(0);
 
-    const notificationTimes = [];
-    let currentTime = new Date(startTime);
-    for (let i = 0; i < parseInt(timesPerDay); i++) {
-      notificationTimes.push(new Date(currentTime.getTime())); // Push a copy of the date
-      currentTime.setTime(
-        currentTime.getTime() + intervalTotalMenit * 60 * 1000
-      );
-      // Prevent infinite loops if interval is 0
-      if (intervalTotalMenit === 0) break;
-      // Ensure next notification is not before the start time on the same day
-      if (
-        currentTime.getTime() <= startTime.getTime() &&
-        i < parseInt(timesPerDay) - 1
-      ) {
-        const nextNotificationTime = new Date(startTime);
-        nextNotificationTime.setDate(nextNotificationTime.getDate() + 1);
-        currentTime = nextNotificationTime;
-      }
+    if (!intervalHour || !intervalMinute || !startHour || !startMinute || !timesPerDay) {
+      alert("Error, Harap isi semua data terlebih dahulu");
+      speak("Harap isi semua data terlebih dahulu", "id-ID", speechRate);
+      return;
     }
 
+    try {
+    const notificationIds = await scheduleMultipleReminders(
+      "Waktunya Minum Obat!",
+      `Jangan lupa minum ${namaObat} ${dosisObat}`,
+      parseInt(startHour),
+      parseInt(startMinute),
+      parseInt(intervalHour), // interval in hours
+      parseInt(timesPerDay)   // how many times per day
+    );
+
+    // Simpan data reminder ke AsyncStorage
     const newReminder = {
       namaObat,
       jenisObat,
@@ -190,71 +187,27 @@ export default function AddReminderTimePage() {
       startHour: parseInt(startHour),
       startMinute: parseInt(startMinute),
       timesPerDay: parseInt(timesPerDay),
-      notificationTimes: notificationTimes.map((time) => time.toISOString()), // Store as ISO strings
+      notificationIds, // Simpan ID notifikasi untuk pengelolaan nanti
       isActive: true, // Set to active by default
     };
 
-    try {
-      const existingReminders = await getItem("jadwalObat");
-      const remindersArray = existingReminders
-        ? JSON.parse(existingReminders)
-        : [];
-      remindersArray.push(newReminder);
-      await saveItem("jadwalObat", JSON.stringify(remindersArray));
 
-      // Schedule notifications
-      for (const time of notificationTimes) {
-        const seconds = Math.floor(
-          (new Date(time).getTime() - Date.now()) / 1000
-        );
-        if (seconds > 0) {
-          await Notifications.scheduleNotificationAsync({
-            content: {
-              title: "Waktunya Minum Obat!",
-              body: `Jangan lupa minum ${namaObat} ${dosisObat}`,
-              sound: true,
-            },
-            trigger: {
-              type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
-              seconds,
-              repeats: false, // make sure to include this
-            },
-          });
-        }
-      }
+      // Ambil data existing dan gabungkan dengan data baru
+      const existingRemindersJSON = await getItem("jadwalObat");
+      const existingReminders = existingRemindersJSON ? JSON.parse(existingRemindersJSON) : [];
+      existingReminders.push(newReminder);
+      await saveItem("jadwalObat", JSON.stringify(existingReminders));
 
       speak("Jadwal berhasil ditambahkan", "id-ID", speechRate);
-      router.back(); // Kembali ke halaman jadwal
-    } catch (error) {
+      Alert.alert("Sukses", "Jadwal berhasil ditambahkan", [
+        { text: "OK", onPress: () => router.back() }
+      ]);
+     } catch (error) {
       console.error("Gagal menyimpan jadwal:", error);
       alert("Gagal menyimpan jadwal.");
       speak("Gagal menyimpan jadwal", "id-ID", speechRate);
     }
   };
-
-  // const handleAddReminder = async () => {
-  //   if (!title || !body || !startHour || !startMinute || !interval || !timesPerDay) {
-  //     Alert.alert("Error", "Please fill in all fields.");
-  //     return;
-  //   }
-  
-  //   try {
-  //     await scheduleMultipleReminders(
-  //       title,
-  //       body,
-  //       parseInt(startHour),
-  //       parseInt(startMinute),
-  //       parseInt(interval),      // interval in hours
-  //       parseInt(timesPerDay)    // how many times per day
-  //     );
-  //     Alert.alert("Success", "Reminders scheduled successfully!");
-  //     router.push("/reminder");
-  //   } catch (error) {
-  //     console.error("Error scheduling reminders:", error);
-  //     Alert.alert("Error", "Failed to schedule reminders.");
-  //   }
-  // };
-
 
   return (
     <View style={styles.container}>
@@ -292,14 +245,8 @@ export default function AddReminderTimePage() {
         <TextInput
           style={[styles.input, { fontSize: scaledFontSize("text-lg") }]}
           keyboardType="number-pad"
-          value="00"
-          editable={false}
-        />
-        <Text style={{ fontSize: scaledFontSize("text-lg") }}>:</Text>
-        <TextInput
-          style={[styles.input, { fontSize: scaledFontSize("text-lg") }]}
-          keyboardType="number-pad"
           value={intervalHour}
+          placeholder="00"
           onChangeText={(val) => setIntervalHour(val.replace(/[^0-9]/g, ""))}
           maxLength={2}
         />
@@ -308,6 +255,7 @@ export default function AddReminderTimePage() {
           style={[styles.input, { fontSize: scaledFontSize("text-lg") }]}
           keyboardType="number-pad"
           value={intervalMinute}
+          placeholder="00"
           onChangeText={(val) => setIntervalMinute(val.replace(/[^0-9]/g, ""))}
           maxLength={2}
         />
@@ -316,13 +264,9 @@ export default function AddReminderTimePage() {
         <Text
           style={[styles.timeLabel, { fontSize: scaledFontSize("text-sm") }]}
         >
-          Hari
-        </Text>
-        <Text
-          style={[styles.timeLabel, { fontSize: scaledFontSize("text-sm") }]}
-        >
           Jam
         </Text>
+        <Text style={{ fontSize: scaledFontSize("text-sm") }}>-</Text>
         <Text
           style={[styles.timeLabel, { fontSize: scaledFontSize("text-sm") }]}
         >
@@ -343,6 +287,7 @@ export default function AddReminderTimePage() {
           style={[styles.input, { fontSize: scaledFontSize("text-lg") }]}
           keyboardType="number-pad"
           value={startHour}
+          placeholder="00"
           onChangeText={(val) =>
             setStartHour(val.replace(/[^0-9]/g, "").slice(0, 2))
           }
@@ -352,6 +297,7 @@ export default function AddReminderTimePage() {
         <TextInput
           style={[styles.input, { fontSize: scaledFontSize("text-lg") }]}
           keyboardType="number-pad"
+          placeholder="00"
           value={startMinute}
           onChangeText={(val) =>
             setStartMinute(val.replace(/[^0-9]/g, "").slice(0, 2))
@@ -365,6 +311,7 @@ export default function AddReminderTimePage() {
         >
           Jam
         </Text>
+        <Text style={{ fontSize: scaledFontSize("text-sm") }}>-</Text>
         <Text
           style={[styles.timeLabel, { fontSize: scaledFontSize("text-sm") }]}
         >

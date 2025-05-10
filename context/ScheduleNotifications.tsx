@@ -53,13 +53,13 @@ export const scheduleMultipleReminders = async (
   
 
 // Object Reminder -> Ditaruh di Form Buat Reminder aja nanti
-type Reminder = {
-    id: string; // notification ID
-    medicationName: string;
-    dosage: string;
-    times: { hour: number; minute: number }[];
-    isPaused: boolean;
-  };
+// type Reminder = {
+//     id: string; // notification ID
+//     medicationName: string;
+//     dosage: string;
+//     times: { hour: number; minute: number }[];
+//     isPaused: boolean;
+//   };
 
 
 // Ini Buat Stop Reminder Sementara

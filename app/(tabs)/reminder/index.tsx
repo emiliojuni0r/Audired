@@ -7,6 +7,23 @@ import * as Speech from "expo-speech";
 import { useEffect, useRef, useState } from "react";
 import { useSpeechRate } from "@/context/SpeechRateContext";
 import {saveItem,getItem} from "@/context/SecureStorage";
+import {deleteScheduleMedicationReminder,deleteScheduleMedicatioReminderForever} from "@/context/ScheduleNotifications";
+
+
+// buat interface dulu bang
+export interface ReminderData {
+  id : string
+  namaObat: string;
+  jenisObat: string;
+  dosisObat: string;
+  intervalHour: number;
+  intervalMinute: number;
+  startHour: number;
+  startMinute: number;
+  timesPerDay: number;
+  notificationTimes: string[]; // ISO date strings
+  isActive: boolean;
+}
 
 export default function ReminderScreen() {
   const { scaledFontSize } = useFontSize();
@@ -32,9 +49,7 @@ export default function ReminderScreen() {
 
   const [lihatDetail, SetLihatDetail] = useState(false);
   const [isActive, setIsActive] = useState(false);
-  // const [reminderData, setReminderData] = useState() 
-  // buat interface dulu bang
-  
+  const [reminderData, setReminderData] = useState<ReminderData[]>([]);  
 
   // ini kumpulan variable untuk gambar sesuai dengan tipe obat
 
@@ -54,10 +69,39 @@ export default function ReminderScreen() {
 
   const imgInhaler = require("../../../assets/images/icons/Inhaler.png");
 
+  const handleReminderData = async (): Promise<ReminderData[] | null> => {
+    try {
+      const rawData = await getItem("jadwalObat");
+      console.log(rawData)
+      if (!rawData) return null;
+  
+      const parsedData: ReminderData[] = JSON.parse(rawData);
+      return parsedData;
+    } catch (error) {
+      console.error("Error reading reminder data:", error);
+      return null;
+    }
+  }
+
+  const fetchReminder = async () => {
+    const reminder = await handleReminderData();
+    if (reminder) {
+      setReminderData(reminder);
+      console.log("BErhasil AMbil Data bang")
+    }
+  }
+
+  const deleteReminder = async () => {
+
+  }
+
+  const deleteReminderForever = async () => {
+
+  }
+
 
   useEffect(() => {
-    const reminder = getItem("jadwalObat");
-    console.log("Test apakah bisa?", reminder)
+    fetchReminder(); // Ngambil Data dari Lokal
   }, []);
   
 
