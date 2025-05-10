@@ -27,7 +27,7 @@ export default function Camera() {
     return (
       <View style={styles.container}>
         <Text style={styles.message}>
-          We need your permission to show the camera
+          izinkan akses kamera
         </Text>
         <Button onPress={requestPermission} title="grant permission" />
       </View>
