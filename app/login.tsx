@@ -5,6 +5,7 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
+  Image,
 } from "react-native";
 import * as Google from "expo-auth-session/providers/google";
 import * as WebBrowser from "expo-web-browser";
@@ -16,6 +17,7 @@ import axios from "axios";
 import { auth } from "@/firebase";
 import { saveItem } from '../context/SecureStorage';
 import { router } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -93,39 +95,19 @@ export default function Login() {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Welcome</Text>
-      <Text style={styles.subtitle}>Sign in to continue</Text>
+    <View className="flex-1 bg-white justify-center items-center p-[20px]">
+      <Text className="text-2xl font-bold mb-0.5">Selamat Datang</Text>
+      <Image source={require("../assets/images/icon.png")} width={10} height={10}></Image>
 
-      <TouchableOpacity
+      <TouchableOpacity className="w-[83%] h-10 mx-auto border border-[#150E7C] justify-center items-center flex-row rounded-[8px]"
         onPress={handleGoogleSignIn}
         disabled={!request || isLoading}
       >
-        <Text>{isLoading ? "Signing in..." : "Sign in with Google"}</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity className="mt-5" onPress={() => {router.push("/(tabs)/history")}}>
-        <Text>pass login (development)</Text>
+        {isLoading ? (<View></View>) : <Ionicons name="logo-google" size={20} className="mr-2"/>}
+        <Text>{isLoading ? "Memuat..." : "Lanjutkan dengan Google"}</Text>
       </TouchableOpacity>
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 20,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 10,
-  },
-  subtitle: {
-    fontSize: 16,
-    marginBottom: 30,
-    color: "#666",
-  },
-});
+
