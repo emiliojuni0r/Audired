@@ -15,22 +15,30 @@ import { useState, useCallback, useRef } from "react";
 import axios from "axios";
 import { useEffect } from "react";
 import { auth } from "@/firebase";
-import { useSpeechRate } from "@/context/SpeechRateContext";
+
+
 
 // Ini Aku Update bang nyesuain Data Object Medication dari BE
 export interface hasilSimpan {
-  id: string;
-  bahanAktif: string;
-  namaObat: string;
-  jenisObat: string;
-  kekuatanKonsentrasi: string;
-  indikasiObat: string;
-  aturanPakai: string;
-  peringatanPerhatian: string;
-  tanggalKadaluarsa: string;
-  petunjukPenyimpanan: string;
-  deskripsiPenggunaanObat: string;
+    id : string,
+    bahanAktif : bahanAktifList[],
+    namaObat: string,
+    jenisObat: string,
+    kekuatanKonsentrasi: string,
+    indikasiObat: string,
+    aturanPakai: string,
+    peringatanPerhatian : string,
+    tanggalKadaluarsa: string,
+    petunjukPenyimpanan: string,
+    deskripsiPenggunaanObat: string,
+};
+
+// Untuk Nyimpen Data
+export interface bahanAktifList {
+  nama: string;
+  konsentrasi: string;
 }
+
 
 export default function PageSimpan() {
   const { scaledFontSize } = useFontSize();
@@ -74,20 +82,49 @@ export default function PageSimpan() {
       const user = auth.currentUser;
       const token = await user?.getIdToken();
 
-      const response = await axios(
-        "https://audired-820e0.et.r.appspot.com/api/medication/my",
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          data: {
-            userid: user,
-          },
+    const response = await axios("https://audired-820e0.et.r.appspot.com/api/medication/my",{
+      headers : {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      data : {
+        userid : user
+      }
+    })
+    
+    // rawData: whatever the API gave you
+    const rawData: any[] = response.data.data;
+
+    // parsedData: guaranteed to have bahanAktif as an array
+    const parsedData: hasilSimpan[] = rawData.map((item) => {
+      let ba = item.bahanAktif;
+
+      // If it's a JSON string, parse it
+      if (typeof ba === "string") {
+        try {
+          ba = JSON.parse(ba);
+        } catch {
+          // not JSON — leave as-is
         }
-      );
-      // console.log(response.data)
-      setDataObat(response.data.data);
+      }
+
+      // If it’s now a single object, wrap it in an array
+      if (ba && !Array.isArray(ba) && typeof ba === "object") {
+        ba = [ba];
+      }
+
+      // If it’s still not an array, fallback to empty
+      if (!Array.isArray(ba)) {
+        ba = [];
+      }
+
+      return {
+        ...item,
+        bahanAktif: ba as { nama: string; konsentrasi: string }[],
+      };
+    });
+
+    setDataObat(parsedData);
     } catch (error) {
       console.error("Gagal mengambil data:", error);
     } finally {
@@ -137,7 +174,13 @@ export default function PageSimpan() {
         } w-[90%] h-fit justify-start items-start content-start my-2`}
       >
         <Text>Jenis obat: {item.jenisObat}</Text>
-        <Text>Bahan Aktif: {item.bahanAktif}</Text>
+        <Text>
+          Bahan Aktif: {
+            item.bahanAktif
+              .map(b => `${b.nama} (${b.konsentrasi})`)
+              .join(', ')
+          }
+        </Text>
         <Text>Kekuatan/Konsentrasi: {item.kekuatanKonsentrasi}</Text>
         <Text>Indikasi obat: {item.indikasiObat}</Text>
         <Text>Aturan Pakai: {item.aturanPakai}</Text>
