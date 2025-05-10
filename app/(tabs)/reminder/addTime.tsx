@@ -95,6 +95,7 @@ import {
   Pressable,
   StyleSheet,
   TouchableOpacity,
+  ScrollView,
   Alert,
 } from "react-native";
 import * as Notifications from "expo-notifications";
@@ -210,7 +211,7 @@ export default function AddReminderTimePage() {
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <TouchableOpacity
         className="flex flex-row w-fit h-fit items-center mr-auto mb-4"
         onPress={() => {
@@ -351,7 +352,7 @@ export default function AddReminderTimePage() {
           Tambah dan kembali
         </Text>
       </TouchableOpacity>
-    </View>
+    </ScrollView>
   );
 }
 

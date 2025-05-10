@@ -281,7 +281,7 @@ export default function AddReminderPage() {
       <TouchableOpacity
         className="flex flex-row w-fit h-fit items-center mr-auto"
         onPress={() => {
-          router.back();
+          router.navigate("/(tabs)/reminder");
           speak("Kembali ke Jadwal", "id-ID", speechRate);
         }}
       >

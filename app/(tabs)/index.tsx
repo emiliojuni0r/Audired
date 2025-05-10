@@ -1,13 +1,12 @@
 import { useFontSize } from "@/context/FontSizeContext";
 import { Link, useNavigation, useRouter } from "expo-router";
 import { Image, Text, TouchableOpacity, View } from "react-native";
-import React from "react";
+import React, { useRef } from "react";
 import * as Speech from "expo-speech";
 import { Float } from "react-native/Libraries/Types/CodegenTypes";
-import {auth} from "@/firebase";  
+import { auth } from "@/firebase";
 import { useAuth } from "@/context/auth";
 import { useSpeechRate } from "@/context/SpeechRateContext";
-
 
 // home page
 export default function Index() {
@@ -16,24 +15,38 @@ export default function Index() {
   const router = useRouter();
   const { logout } = useAuth(); // ambil fungsi logout dari context
 
+  const isSpeaking = useRef(false); // Ref untuk melacak status TTS
+
   const speak = (text: string, languageCode = "id-ID", speakSpeed: number) => {
-    Speech.speak(text, { language: languageCode, rate: speakSpeed });
+    if (isSpeaking.current) {
+      Speech.stop(); // Batalkan TTS yang sedang berjalan
+    }
+    isSpeaking.current = true;
+    Speech.speak(text, {
+      language: languageCode,
+      rate: speakSpeed,
+      onStopped: () => {
+        isSpeaking.current = false; // Reset status setelah dihentikan
+      },
+      onDone: () => {
+        isSpeaking.current = false; // Reset status setelah selesai
+      },
+    });
   };
 
   const screenText = "Kamu sekarang berada di Beranda.";
 
-  
-  const handeLogout = async () =>{
-    try {
-      await auth.signOut();
-      await logout();
-      speak("Kamu telah logout", "id-ID", speechRate);
-      router.replace("/login");
-    } catch (error) {
-      console.error("Logout error:", error);
-      speak("Terjadi kesalahan saat logout", "id-ID", speechRate);
-    }
-  };
+  // const handeLogout = async () => {
+  //   try {
+  //     await auth.signOut();
+  //     await logout();
+  //     speak("Kamu telah logout", "id-ID", speechRate);
+  //     router.replace("/login");
+  //   } catch (error) {
+  //     console.error("Logout error:", error);
+  //     speak("Terjadi kesalahan saat logout", "id-ID", speechRate);
+  //   }
+  // };
 
   React.useEffect(() => {
     speak(screenText, "id-ID", speechRate); // Speak when the component mounts
@@ -113,7 +126,7 @@ export default function Index() {
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={() => router.push("/(tabs)/simpan")}
+            onPress={() => {router.push("/(tabs)/simpan"); speak("Kamu mengakses halaman simpan", "id-ID", speechRate);}}
             className="w-fit h-fit flex flex-col justify-center items-center"
           >
             <View className="border w-[40vw] h-[40vw] border-[#1359A0] rounded-full text-center">
@@ -132,7 +145,6 @@ export default function Index() {
           </TouchableOpacity>
         </View>
       </View>
-
     </View>
   );
 }

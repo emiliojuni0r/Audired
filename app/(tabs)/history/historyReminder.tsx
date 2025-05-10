@@ -222,7 +222,7 @@ export default function historyReminder() {
         className="flex flex-row w-fit h-fit items-center mr-auto"
         onPress={() => {
           router.back();
-          speak("Kembali ke Home Page", "id-ID", speechRate);
+          speak("Kembali ke Beranda", "id-ID", speechRate);
         }}
       >
         <Ionicons name="arrow-back" size={25} />

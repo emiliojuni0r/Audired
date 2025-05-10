@@ -58,8 +58,8 @@ export default function ProfilePage() {
       <TouchableOpacity
         className="flex flex-row w-fit h-fit items-center mr-auto"
         onPress={() => {
-          router.back();
-          speak("Kembali ke Home Page", "id-ID", speechRate);
+          router.navigate("/(tabs)/settings");
+          speak("Kembali ke pengaturan", "id-ID", speechRate);
         }}
       >
         <Ionicons name="arrow-back" size={25} />
