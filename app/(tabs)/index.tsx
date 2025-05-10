@@ -133,14 +133,6 @@ export default function Index() {
         </View>
       </View>
 
-
-      <Link className="mt-20" href={"/login"}>
-        <Text>preview login page..ini nanti di delete</Text>
-      </Link>
-      <TouchableOpacity className="mt-20" onPress={handeLogout}>
-        <Text> logout page..ini nanti di delete</Text>
-      </TouchableOpacity>
-
     </View>
   );
 }

@@ -43,7 +43,7 @@ export default function TabsLayout() {
           }}
         />
         <Tabs.Screen
-          name="settings"
+          name="settings/index"
           options={{
             tabBarLabel : 'Pengaturan',
             headerShown: false,
@@ -65,6 +65,8 @@ export default function TabsLayout() {
         <Tabs.Screen name="simpan/index" options={{href: null, headerShown: false}} /> // history ga nambah di bottom nav
         <Tabs.Screen name="history/historyReminder" options={{href: null, headerShown: false}} /> // history ga nambah di bottom na
         <Tabs.Screen name="history/historyScan" options={{href: null, headerShown: false}} /> // history ga nambah di bottom nav
+        <Tabs.Screen name="settings/settingAplikasi" options={{href: null, headerShown: false}} /> // history ga nambah di bottom nav
+        <Tabs.Screen name="settings/profile" options={{href: null, headerShown: false}} /> // history ga nambah di bottom nav
       </Tabs>
     </>
   );
