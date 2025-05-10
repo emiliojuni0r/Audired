@@ -71,7 +71,7 @@ export default function pageSettingAplikasi() {
         className="flex flex-row w-fit h-fit items-center mr-auto"
         onPress={() => {
           router.navigate("/(tabs)/settings");
-          speak("Kembali ke Home Page", "id-ID", speechRate);
+          speak("Kembali ke pengaturan", "id-ID", speechRate);
         }}
       >
         <Ionicons name="arrow-back" size={25} />

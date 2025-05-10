@@ -1,30 +1,36 @@
 import { useFontSize } from "@/context/FontSizeContext";
 import { Ionicons } from "@expo/vector-icons";
 import { router, useFocusEffect } from "expo-router";
-import { FlatList, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import {
+  FlatList,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import * as Speech from "expo-speech";
 import { useState, useCallback, useRef } from "react";
 
-// Import Buat Mulai backend 
-import axios  from "axios";
+// Import Buat Mulai backend
+import axios from "axios";
 import { useEffect } from "react";
 import { auth } from "@/firebase";
 import { useSpeechRate } from "@/context/SpeechRateContext";
 
 // Ini Aku Update bang nyesuain Data Object Medication dari BE
 export interface hasilSimpan {
-    id : string,
-    bahanAktif : string,
-    namaObat: string,
-    jenisObat: string,
-    kekuatanKonsentrasi: string,
-    indikasiObat: string,
-    aturanPakai: string,
-    peringatanPerhatian : string,
-    tanggalKadaluarsa: string,
-    petunjukPenyimpanan: string,
-    deskripsiPenggunaanObat: string,
-};
+  id: string;
+  bahanAktif: string;
+  namaObat: string;
+  jenisObat: string;
+  kekuatanKonsentrasi: string;
+  indikasiObat: string;
+  aturanPakai: string;
+  peringatanPerhatian: string;
+  tanggalKadaluarsa: string;
+  petunjukPenyimpanan: string;
+  deskripsiPenggunaanObat: string;
+}
 
 export default function PageSimpan() {
   const { scaledFontSize } = useFontSize();
@@ -33,29 +39,29 @@ export default function PageSimpan() {
   const [loading, setLoading] = useState(true);
 
   const isSpeaking = useRef(false);
-  
-    const speak = (text: string, languageCode = "id-ID", speakSpeed: number) => {
-        if (isSpeaking.current) {
-          Speech.stop(); // Batalkan TTS yang sedang berjalan
-        }
-        isSpeaking.current = true;
-        Speech.speak(text, {
-          language: languageCode,
-          rate: speakSpeed,
-          onStopped: () => {
-            isSpeaking.current = false; // Reset status setelah dihentikan
-          },
-          onDone: () => {
-            isSpeaking.current = false; // Reset status setelah selesai
-          },
-        });
-      };
+
+  const speak = (text: string, languageCode = "id-ID", speakSpeed: number) => {
+    if (isSpeaking.current) {
+      Speech.stop(); // Batalkan TTS yang sedang berjalan
+    }
+    isSpeaking.current = true;
+    Speech.speak(text, {
+      language: languageCode,
+      rate: speakSpeed,
+      onStopped: () => {
+        isSpeaking.current = false; // Reset status setelah dihentikan
+      },
+      onDone: () => {
+        isSpeaking.current = false; // Reset status setelah selesai
+      },
+    });
+  };
 
   // Jalanin Fetch Data Selalu setelah Buka Halaman
   useEffect(() => {
     fetchData();
   }, []);
-  
+
   const [isShowDetail, setIsShowDetail] = useState(false);
 
   const [expandedItemId, setExpandedItemId] = useState<string>(""); // Menyimpan ID item yang sedang detailnya ditampilkan
@@ -63,55 +69,64 @@ export default function PageSimpan() {
   // Ambil Data Obat dari Backend
   const fetchData = async () => {
     try {
-    setLoading(true);
+      setLoading(true);
 
-    const user = auth.currentUser;
-    const token = await user?.getIdToken();
+      const user = auth.currentUser;
+      const token = await user?.getIdToken();
 
-    const response = await axios("https://audired-820e0.et.r.appspot.com/api/medication/my",{
-      headers : {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      data : {
-        userid : user
-      }
-    })
-    // console.log(response.data) 
-    setDataObat(response.data.data);
+      const response = await axios(
+        "https://audired-820e0.et.r.appspot.com/api/medication/my",
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          data: {
+            userid: user,
+          },
+        }
+      );
+      // console.log(response.data)
+      setDataObat(response.data.data);
     } catch (error) {
       console.error("Gagal mengambil data:", error);
     } finally {
       setLoading(false);
     }
-  }
+  };
 
-
-  const deleteData = async (medicationId : string) =>{
+  const deleteData = async (medicationId: string) => {
     try {
       const user = auth.currentUser;
       const token = await user?.getIdToken();
-      
+
       const response = await axios.delete(
-      `https://audired-820e0.et.r.appspot.com/api/medication/my/${medicationId}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    setDataObat((prevData) => prevData.filter(item => item.id !== medicationId));
-    // console.log("Berhasil menghapus:", response.data);
-    speak("Obat berhasil dihapus.", "id-ID", speechRate);
+        `https://audired-820e0.et.r.appspot.com/api/medication/my/${medicationId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      setDataObat((prevData) =>
+        prevData.filter((item) => item.id !== medicationId)
+      );
+      // console.log("Berhasil menghapus:", response.data);
+      speak("Obat berhasil dihapus.", "id-ID", speechRate);
     } catch (error) {
       console.error("Gagal menghapus:", error);
       speak("Gagal menghapus obat.", "id-ID", speechRate);
     }
-  }
+  };
 
   // tampilan untuk render (skip aja cik panjang banget soalnya)
-  const renderItem = ({ item } : {item : hasilSimpan}) => (
-    <View className="w-full min-h-[170px] border border-[#150E7C] rounded-[10px] flex items-center px-1 py-2 mb-5">
+  const renderItem = ({ item }: { item: hasilSimpan }) => (
+    <TouchableOpacity
+      onPress={() => {
+        speak(item.namaObat, "id-ID", speechRate);
+      }}
+      className="w-full min-h-[170px] border border-[#150E7C] rounded-[10px] flex items-center px-1 py-2 mb-5"
+    >
       <View className="w-[90%] h-[0.1px] border-t border-[#150E7C]" />
       <Text className="text-[#150E7C] my-2">Nama obat: {item.namaObat}</Text>
       <View className="w-[90%] h-[0.1px] border-t border-[#150E7C] mb-2" />
@@ -137,7 +152,13 @@ export default function PageSimpan() {
       {/* two button container */}
       <View className="w-full flex items-center gap-y-3 my-auto">
         {/* button hapus */}
-        <TouchableOpacity className="bg-[#150E7C] w-[70%] h-[40px] flex justify-center items-center rounded-[10px]" onPress={() => deleteData(item.id)}>
+        <TouchableOpacity
+          className="bg-[#150E7C] w-[70%] h-[40px] flex justify-center items-center rounded-[10px]"
+          onPress={() => {
+            deleteData(item.id);
+            speak(`menghapus obat ${item.namaObat}`, "id-ID", speechRate);
+          }}
+        >
           <Text
             style={{ fontSize: scaledFontSize("text-base") }}
             className="text-white font-normal text-base"
@@ -147,9 +168,18 @@ export default function PageSimpan() {
         </TouchableOpacity>
         {/* button lihat detail */}
         <TouchableOpacity
-          onPress={() =>
-            setExpandedItemId(expandedItemId === item.id ? "" : item.id)
-          }
+          onPress={() => {
+            setExpandedItemId(expandedItemId === item.id ? "" : item.id);
+            speak(
+              `${
+                expandedItemId
+                  ? `menyembunyikan detail ${item.namaObat}`
+                  : `melihat detail ${item.namaObat}`
+              }`,
+              "id-ID",
+              speechRate
+            );
+          }}
           className="bg-white border border-[#150E7C] w-[70%] h-[40px] flex justify-center items-center rounded-[10px]"
         >
           <Text
@@ -160,7 +190,7 @@ export default function PageSimpan() {
           </Text>
         </TouchableOpacity>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 
   return (
