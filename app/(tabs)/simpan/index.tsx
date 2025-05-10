@@ -3,12 +3,13 @@ import { Ionicons } from "@expo/vector-icons";
 import { router, useFocusEffect } from "expo-router";
 import { FlatList, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import * as Speech from "expo-speech";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef } from "react";
 
 // Import Buat Mulai backend 
 import axios  from "axios";
 import { useEffect } from "react";
 import { auth } from "@/firebase";
+import { useSpeechRate } from "@/context/SpeechRateContext";
 
 // Ini Aku Update bang nyesuain Data Object Medication dari BE
 export interface hasilSimpan {
@@ -28,11 +29,27 @@ export interface hasilSimpan {
 export default function PageSimpan() {
   const { scaledFontSize } = useFontSize();
   const [dataObat, setDataObat] = useState<hasilSimpan[]>([]);
+  const { speechRate } = useSpeechRate();
   const [loading, setLoading] = useState(true);
 
-  const speak = (text: string, languageCode = "id-ID") => {
-    Speech.speak(text, { language: languageCode });
-  };
+  const isSpeaking = useRef(false);
+  
+    const speak = (text: string, languageCode = "id-ID", speakSpeed: number) => {
+        if (isSpeaking.current) {
+          Speech.stop(); // Batalkan TTS yang sedang berjalan
+        }
+        isSpeaking.current = true;
+        Speech.speak(text, {
+          language: languageCode,
+          rate: speakSpeed,
+          onStopped: () => {
+            isSpeaking.current = false; // Reset status setelah dihentikan
+          },
+          onDone: () => {
+            isSpeaking.current = false; // Reset status setelah selesai
+          },
+        });
+      };
 
   // Jalanin Fetch Data Selalu setelah Buka Halaman
   useEffect(() => {
@@ -85,10 +102,10 @@ export default function PageSimpan() {
     );
     setDataObat((prevData) => prevData.filter(item => item.id !== medicationId));
     // console.log("Berhasil menghapus:", response.data);
-    speak("Obat berhasil dihapus.");
+    speak("Obat berhasil dihapus.", "id-ID", speechRate);
     } catch (error) {
       console.error("Gagal menghapus:", error);
-      speak("Gagal menghapus obat.");
+      speak("Gagal menghapus obat.", "id-ID", speechRate);
     }
   }
 
@@ -153,7 +170,7 @@ export default function PageSimpan() {
         className="flex flex-row w-fit h-fit items-center mr-auto"
         onPress={() => {
           router.back();
-          speak("Kembali ke Home Page");
+          speak("Kembali ke beranda", "id-ID", speechRate);
         }}
       >
         <Ionicons name="arrow-back" size={25} />

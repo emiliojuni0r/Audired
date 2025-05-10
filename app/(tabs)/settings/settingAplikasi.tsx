@@ -31,11 +31,13 @@ export default function pageSettingAplikasi() {
   };
 
   const increaseFontSize = () => {
+    speak('Ukuran teks ditingkatkan', "id-ID", speechRate);
     setFontScale(fontScale + 0.1);
     
   };
 
   const decreaseFontSize = () => {
+    speak('Ukuran teks dikurangi', "id-ID", speechRate);
     setFontScale(Math.max(0.5, fontScale - 0.1));
   };
 
@@ -91,7 +93,7 @@ export default function pageSettingAplikasi() {
       {/* kecepata container */}
       <View className="w-[90%] h-[100px] flex flex-col justify-center gap-y-3 px-5">
         <Text>
-          <span className="font-bold">Kecepatan ucapan:</span>{" "}
+          Kecepatan ucapan:{" "}
           {speechRate.toFixed(1)}
         </Text>
         <View className="w-full flex flex-row gap-x-2">
@@ -114,7 +116,7 @@ export default function pageSettingAplikasi() {
       {/* ukuran container */}
       <View className="w-[90%] h-[100px] flex flex-col justify-center gap-y-3 px-5">
         <Text>
-          <span className="font-bold">Ukuran teks:</span>{" "}
+          Ukuran teks:{" "}
           {(fontScale * 100).toFixed(0)}%
         </Text>
         <View className="w-full flex flex-row gap-x-2">
