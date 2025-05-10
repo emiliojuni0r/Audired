@@ -4,8 +4,9 @@ import { router } from "expo-router";
 import { navigate } from "expo-router/build/global-state/routing";
 import { View, Text, Touchable, TouchableOpacity, Image } from "react-native";
 import * as Speech from "expo-speech";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSpeechRate } from "@/context/SpeechRateContext";
+import {saveItem,getItem} from "@/context/SecureStorage";
 
 export default function ReminderScreen() {
   const { scaledFontSize } = useFontSize();
@@ -31,6 +32,9 @@ export default function ReminderScreen() {
 
   const [lihatDetail, SetLihatDetail] = useState(false);
   const [isActive, setIsActive] = useState(false);
+  // const [reminderData, setReminderData] = useState() 
+  // buat interface dulu bang
+  
 
   // ini kumpulan variable untuk gambar sesuai dengan tipe obat
 
@@ -49,6 +53,14 @@ export default function ReminderScreen() {
   const imgTetes = require("../../../assets/images/icons/Tetes.png");
 
   const imgInhaler = require("../../../assets/images/icons/Inhaler.png");
+
+
+  useEffect(() => {
+    const reminder = getItem("jadwalObat");
+    console.log("Test apakah bisa?", reminder)
+  }, []);
+  
+
 
   return (
     <View className="flex-1 bg-white align-top p-2">

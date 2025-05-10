@@ -27,17 +27,29 @@ export const scheduleMedicationReminder = async (title:string, body:string, hour
 };
 
 // Ini buat Handle Kalo butuh Notifikasi banyak dalam sehari (e.g. Panadol 3x Sehari, nah pake ini fungsi)
-// const scheduleMultipleReminders = async (title:string, body:string, startHour:number, interval:number, timesPerDay:number) => {
-//     let ids = [];
-  
-//     for (let i = 0; i < timesPerDay; i++) {
-//       const hour = startHour + i * interval;
-//       const id = await scheduleMedicationReminder(title, body, hour % 24, 0);
-//       ids.push(id);
-//     }
-  
-//     await AsyncStorage.setItem(`reminder_group_${title}`, JSON.stringify(ids));
-//   };
+export const scheduleMultipleReminders = async (
+  title: string,
+  body: string,
+  startHour: number,
+  startMinute: number,
+  interval: number, // in hours
+  timesPerDay: number
+) => {
+  const ids: string[] = [];
+
+  for (let i = 0; i < timesPerDay; i++) {
+    const totalMinutes = (startHour * 60 + startMinute) + i * interval * 60;
+    const hour = Math.floor(totalMinutes / 60) % 24;
+    const minute = totalMinutes % 60;
+
+    const id = await scheduleMedicationReminder(title, body, hour, minute);
+    ids.push(id);
+  }
+
+  // Use a unique key, or a hash of title
+  await AsyncStorage.setItem(`reminder_group_${title}`, JSON.stringify(ids));
+};
+
   
 
 // Object Reminder -> Ditaruh di Form Buat Reminder aja nanti

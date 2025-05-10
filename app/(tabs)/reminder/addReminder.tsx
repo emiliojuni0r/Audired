@@ -272,6 +272,10 @@ export default function AddReminderPage() {
     }
   };
 
+ 
+
+  
+
   return (
     <View className="flex flex-1 bg-white items-center content-center p-2">
       <TouchableOpacity

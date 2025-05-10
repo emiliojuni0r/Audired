@@ -97,7 +97,8 @@ import {
   TouchableOpacity,
 } from "react-native";
 import * as Notifications from "expo-notifications";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+// import AsyncStorage from "@react-native-async-storage/async-storage";
+import {saveItem, getItem} from "@/context/SecureStorage"
 import { router, useLocalSearchParams } from "expo-router";
 import { useFontSize } from "@/context/FontSizeContext";
 import { useSpeechRate } from "@/context/SpeechRateContext";
@@ -194,12 +195,12 @@ export default function AddReminderTimePage() {
     };
 
     try {
-      const existingReminders = await AsyncStorage.getItem("jadwalObat");
+      const existingReminders = await getItem("jadwalObat");
       const remindersArray = existingReminders
         ? JSON.parse(existingReminders)
         : [];
       remindersArray.push(newReminder);
-      await AsyncStorage.setItem("jadwalObat", JSON.stringify(remindersArray));
+      await saveItem("jadwalObat", JSON.stringify(remindersArray));
 
       // Schedule notifications
       for (const time of notificationTimes) {
@@ -230,6 +231,30 @@ export default function AddReminderTimePage() {
       speak("Gagal menyimpan jadwal", "id-ID", speechRate);
     }
   };
+
+  // const handleAddReminder = async () => {
+  //   if (!title || !body || !startHour || !startMinute || !interval || !timesPerDay) {
+  //     Alert.alert("Error", "Please fill in all fields.");
+  //     return;
+  //   }
+  
+  //   try {
+  //     await scheduleMultipleReminders(
+  //       title,
+  //       body,
+  //       parseInt(startHour),
+  //       parseInt(startMinute),
+  //       parseInt(interval),      // interval in hours
+  //       parseInt(timesPerDay)    // how many times per day
+  //     );
+  //     Alert.alert("Success", "Reminders scheduled successfully!");
+  //     router.push("/reminder");
+  //   } catch (error) {
+  //     console.error("Error scheduling reminders:", error);
+  //     Alert.alert("Error", "Failed to schedule reminders.");
+  //   }
+  // };
+
 
   return (
     <View style={styles.container}>
