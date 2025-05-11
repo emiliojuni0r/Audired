@@ -41,7 +41,7 @@ export default function Camera() {
   const handleTakePhoto = async () => {
     if (cameraRef.current) {
       const options = {
-        quality: 1,
+        quality: 0.5,
         base64: true,
         exif: false,
       };
