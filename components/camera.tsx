@@ -5,6 +5,7 @@ import { CameraView, CameraType, useCameraPermissions } from "expo-camera";
 import { useRef, useState } from "react";
 import { Button, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import * as Speech from "expo-speech";
+import * as ImageManipulator from 'expo-image-manipulator';
 
 export default function Camera() {
   const { scaledFontSize } = useFontSize();
@@ -41,7 +42,7 @@ export default function Camera() {
   const handleTakePhoto = async () => {
     if (cameraRef.current) {
       const options = {
-        quality: 1,
+        quality: 0.5,
         base64: true,
         exif: false,
       };
