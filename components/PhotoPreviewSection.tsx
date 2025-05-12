@@ -1,7 +1,7 @@
 import { Fontisto } from "@expo/vector-icons";
 import { CameraCapturedPicture } from "expo-camera";
 import { useRouter } from "expo-router";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { Alert, Platform } from "react-native";
 import {
   Image,
@@ -13,6 +13,7 @@ import {
 } from "react-native";
 import * as Speech from "expo-speech";
 import { auth } from "../firebase";
+import { useSpeechRate } from "@/context/SpeechRateContext";
 
 export default function PhotoPreviewSection({
   photo,
@@ -24,13 +25,29 @@ export default function PhotoPreviewSection({
 }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const { speechRate } = useSpeechRate();
 
-  const speak = (text: string, languageCode = "id-ID") => {
-    Speech.speak(text, { language: languageCode });
-  };
+  const isSpeaking = useRef(false); // Ref untuk melacak status TTS
+    
+      const speak = (text: string, languageCode = "id-ID", speakSpeed: number) => {
+        if (isSpeaking.current) {
+          Speech.stop(); // Batalkan TTS yang sedang berjalan
+        }
+        isSpeaking.current = true;
+        Speech.speak(text, {
+          language: languageCode,
+          rate: speakSpeed,
+          onStopped: () => {
+            isSpeaking.current = false; // Reset status setelah dihentikan
+          },
+          onDone: () => {
+            isSpeaking.current = false; // Reset status setelah selesai
+          },
+        });
+      };
 
   const handleButtonPotretUlang = () => {
-    speak("Potret Ulang gambar");
+    speak("Potret Ulang gambar","id-ID", speechRate);
     handleRetakePhoto();
   };
 
@@ -40,7 +57,7 @@ export default function PhotoPreviewSection({
   // }
 
   const sendToBackend = async () => {
-    speak("Lihat hasil scan");
+    speak("Lihat hasil scan", "id-ID", speechRate);
     setLoading(true);
     try {
       console.log("Starting API call..."); // Debugging log

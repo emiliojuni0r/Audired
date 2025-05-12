@@ -335,7 +335,7 @@ export default function AddReminderPage() {
   };
 
   return (
-    <SafeAreaView className="flex flex-1">
+    <View className="flex flex-1">
       <View className="flex bg-white items-center content-center p-2">
         <TouchableOpacity
           className="flex flex-row w-fit h-fit items-center mr-auto"
@@ -430,6 +430,6 @@ export default function AddReminderPage() {
           </TouchableOpacity>
         </View>
       </View>
-    </SafeAreaView>
+    </View>
   );
 }
