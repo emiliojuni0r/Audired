@@ -189,6 +189,7 @@ export default function ReminderScreen() {
                 />
 
                 {/* tampilan ketika belum di klik 'lihat detail' */}
+                {/* tampilan ketika belum di klik 'lihat detail' */}
 
                 <Text
                   className={`${
@@ -197,7 +198,15 @@ export default function ReminderScreen() {
                 >
                   {item.namaObat}, {item.intervalHour} jam {item.intervalMinute} menit
                 </Text>
+                <Text
+                  className={`${
+                    lihatDetail ? "hidden" : "flex"
+                  } text-base font-normal text-[#150E7C] ml-3`}
+                >
+                  {item.namaObat}, {item.intervalHour} jam {item.intervalMinute} menit
+                </Text>
 
+                {/* ini nanti muncul setelah 'lihat detail' */}
                 {/* ini nanti muncul setelah 'lihat detail' */}
 
                 <View className={`${lihatDetail ? "flex" : "hidden"} ml-3`}>
