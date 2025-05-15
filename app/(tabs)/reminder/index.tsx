@@ -105,6 +105,66 @@ export default function ReminderScreen() {
   }, []);
   
 
+  const renderItemReminder = ({item}: {item: ReminderData}) => (
+    <View className="w-[95%] min-h-[15vh] border border-[#150E7C] rounded-[10px] items-center p-2 mb-3">
+              <View className="w-[95%] h-fit flex flex-row items-center ">
+                <Image
+                  source={getImageByType(item.jenisObat)}
+                  width={100}
+                  height={100}
+                />
+
+                {/* tampilan ketika belum di klik 'lihat detail' */}
+
+                <Text
+                  className={`${
+                    lihatDetail ? "hidden" : "flex"
+                  } text-base font-normal text-[#150E7C] ml-3`}
+                >
+                  {item.namaObat}, {item.intervalHour} jam {item.intervalMinute} menit
+                </Text>
+
+                {/* ini nanti muncul setelah 'lihat detail' */}
+
+                <View className={`${lihatDetail ? "flex" : "hidden"} ml-3`}>
+                  <Text>
+                    {item.namaObat}, {item.jenisObat}
+                  </Text>
+
+                  <Text>Dosis: {item.dosisObat}</Text>
+
+                  <Text>
+                    Jarak waktu: {item.intervalHour} jam ({item.timesPerDay}x sehari)
+                  </Text>
+                </View>
+              </View>
+
+              <View
+                className={`${
+                  lihatDetail ? "flex" : "hidden"
+                } w-full items-center my-3`}
+              >
+                Matikan jadwal sementara
+              </Text>
+            </TouchableOpacity>
+
+            {/* ini untuk delete */}
+
+            <TouchableOpacity
+              onPress={() => {}}
+              className={`
+
+"bg-white border border-[#150E7C] w-[70%] h-[40px] flex justify-center items-center rounded-[10px] mt-3`}
+            >
+                <Text
+                  style={{ fontSize: scaledFontSize("text-base") }}
+                  className="text-white font-normal text-base"
+                >
+                  {lihatDetail ? "Sembunyikan Detail" : "Lihat Detail"}
+                </Text>
+              </TouchableOpacity>
+            </View>
+  );
 
   return (
     <View className="flex-1 bg-white align-top p-2">
@@ -150,105 +210,16 @@ export default function ReminderScreen() {
           style={{ fontSize: scaledFontSize("text-base") }}
           className="text-base font-semibold text-[#150E7C] mb-3"
         >
-          Jadwal yang sedang berlangsung: 3
+          Jadwal yang sedang berlangsung: {reminderData.filter((item) => item.isActive).length}
         </Text>
 
         {/* start of generate list jadwal minum obat yang ada */}
-        {/* containeSr */}
-
-        <View className="w-[95%] min-h-[15vh] border border-[#150E7C] rounded-[10px] items-center p-2">
-          <View className="w-[95%] h-fit flex flex-row items-center ">
-            <Image source={imgTablet} width={100} height={100} />
-
-            {/* tampilan ketika belum di klik 'lihat detail' */}
-
-            <Text
-              className={`${
-                lihatDetail ? "hidden" : "flex"
-              } text-base font-normal text-[#150E7C] ml-3`}
-            >
-              Paracetamol, 5 jam 21 menit
-            </Text>
-
-            {/* ini nanti muncul setelah 'lihat detail' */}
-
-            <View className={`${lihatDetail ? "flex" : "hidden"} ml-3`}>
-              <Text>Paracetamol, tablet</Text>
-
-              <Text>Dosis: 1 tablet</Text>
-
-              <Text>Jarak waktu: 8 jam (3x sehari)</Text>
-            </View>
-          </View>
-
-          <View
-            className={`${
-              lihatDetail ? "flex" : "hidden"
-            } w-full items-center my-3`}
-          >
-            <View className="w-[90%] h-[0.1px] border-t border-[#150E7C]" />
-
-            <Text className="text-[#150E7C] my-2">
-              Jadwal mendatang : 5 jam 21 menit
-            </Text>
-
-            <View className="w-[90%] h-[0.1px] border-t border-[#150E7C]" />
-
-            {/* ini untuk kapan terakhir dinonaktifkan */}
-
-            <Text className="text-base my-1">
-              Telah berlangsung selama: 3 hari
-            </Text>
-
-            {/* ini button untuk aktifkan kembali jadwal */}
-
-            <TouchableOpacity
-              onPress={() => {
-                setIsActive(!isActive);
-              }}
-              className={`bg-white border border-[#150E7C] w-[70%] h-[40px] flex justify-center items-center rounded-[10px] mt-3`}
-            >
-              <Text
-                style={{ fontSize: scaledFontSize("text-base") }}
-                className={`
-                  text-[#150E7C]
-                } font-normal text-base`}
-              >
-                Matikan jadwal sementara
-              </Text>
-            </TouchableOpacity>
-
-            {/* ini untuk delete */}
-
-            <TouchableOpacity
-              onPress={() => {}}
-              className={`
-
-"bg-white border border-[#150E7C] w-[70%] h-[40px] flex justify-center items-center rounded-[10px] mt-3`}
-            >
-              <Text
-                style={{ fontSize: scaledFontSize("text-base") }}
-                className={"text-[#150E7C] font-normal text-base"}
-              >
-                Matikan jadwal selamanya
-              </Text>
-            </TouchableOpacity>
-          </View>
-
-          <TouchableOpacity
-            onPress={() => {
-              SetLihatDetail(!lihatDetail);
-            }}
-            className="bg-[#150E7C] w-[70%] h-[40px] flex justify-center items-center rounded-[10px] mt-auto"
-          >
-            <Text
-              style={{ fontSize: scaledFontSize("text-base") }}
-              className="text-white font-normal text-base"
-            >
-              {lihatDetail ? "sembunyikan detail" : "Lihat Detail"}
-            </Text>
-          </TouchableOpacity>
-        </View>
+        {/* container */}
+        <FlatList
+          data={reminderData}
+          renderItem={renderItemReminder}
+          keyExtractor={(item) => item.id}
+        />
       </View>
       {/* end of  container list jadwal */}
     </View>
