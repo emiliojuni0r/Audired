@@ -5,6 +5,8 @@ import { CameraView, CameraType, useCameraPermissions } from "expo-camera";
 import { useRef, useState } from "react";
 import { Button, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import * as Speech from "expo-speech";
+import * as ImageManipulator from 'expo-image-manipulator';
+import { useSpeechRate } from "@/context/SpeechRateContext";
 
 export default function Camera() {
   const { scaledFontSize } = useFontSize();
@@ -12,10 +14,26 @@ export default function Camera() {
   const [permission, requestPermission] = useCameraPermissions();
   const [photo, setPhoto] = useState<any>(null);
   const cameraRef = useRef<CameraView | null>(null);
+  const { speechRate } = useSpeechRate();
 
-  const speak = (text: string, languageCode = "id-ID") => {
-    Speech.speak(text, { language: languageCode });
-  };
+  const isSpeaking = useRef(false); // Ref untuk melacak status TTS
+  
+    const speak = (text: string, languageCode = "id-ID", speakSpeed: number) => {
+      if (isSpeaking.current) {
+        Speech.stop(); // Batalkan TTS yang sedang berjalan
+      }
+      isSpeaking.current = true;
+      Speech.speak(text, {
+        language: languageCode,
+        rate: speakSpeed,
+        onStopped: () => {
+          isSpeaking.current = false; // Reset status setelah dihentikan
+        },
+        onDone: () => {
+          isSpeaking.current = false; // Reset status setelah selesai
+        },
+      });
+    };
 
   if (!permission) {
     // Camera permissions are still loading.
@@ -61,7 +79,7 @@ export default function Camera() {
   //this function for potret button handle two function
   const handlePotretPress = () => {
     handleTakePhoto();
-    speak("Mengambil gambar", "id-ID");
+    speak("Mengambil gambar", "id-ID", speechRate);
   };
 
   const handleSwitchCameraPress = () => {
@@ -74,7 +92,7 @@ export default function Camera() {
       whichCamera = "Kamu menggunakan kamera belakang"
     }
 
-    speak(whichCamera, "id-ID");
+    speak(whichCamera, "id-ID",speechRate);
   };
 
   const handleRetakePhoto = () => setPhoto(null);

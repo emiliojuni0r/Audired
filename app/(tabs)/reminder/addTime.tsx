@@ -211,7 +211,7 @@ export default function AddReminderTimePage() {
   };
 
   return (
-    <ScrollView style={styles.container}>
+    <View style={styles.container}>
       <TouchableOpacity
         className="flex flex-row w-fit h-fit items-center mr-auto mb-4"
         onPress={() => {
@@ -352,7 +352,7 @@ export default function AddReminderTimePage() {
           Tambah dan kembali
         </Text>
       </TouchableOpacity>
-    </ScrollView>
+    </View>
   );
 }
 
@@ -361,6 +361,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     backgroundColor: "#fff",
+    alignItems: "center"
   },
   label: {
     fontWeight: "bold",
@@ -403,6 +404,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginTop: 20,
     alignItems: "center",
+    width: "90%",
   },
   saveButton: {
     backgroundColor: "#150E7C",
@@ -410,5 +412,6 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginTop: 15,
     alignItems: "center",
+    width: "90%"
   },
 });

@@ -35,7 +35,7 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash-audired.png",
+          "image": "./assets/images/icon.png",
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
@@ -60,3 +60,68 @@
     "owner": "emiliojunior"
   }
 }
+
+// app.config.js
+
+// module.exports = () => ({
+//   expo: {
+//     name: "Audired",
+//     slug: "Audired",
+//     version: "1.0.0",
+//     orientation: "portrait",
+//     icon: "./assets/images/icon.png",
+//     scheme: "myapp",
+//     userInterfaceStyle: "automatic",
+//     newArchEnabled: true,
+//     ios: {
+//       supportsTablet: true,
+//       runtimeVersion: {
+//         policy: "appVersion"
+//       }
+//     },
+//     android: {
+//       adaptiveIcon: {
+//         foregroundImage: "./assets/images/adaptive-icon.png",
+//         backgroundColor: "#ffffff"
+//       },
+//       package: "com.anonymous.Audired",
+//       googleServicesFile: "./google-services.json",
+//       runtimeVersion: "1.0.0"
+//     },
+//     web: {
+//       bundler: "metro",
+//       output: "static",
+//       favicon: "./assets/images/favicon.png"
+//     },
+//     plugins: [
+//       "expo-router",
+//       "@react-native-firebase/app",
+//       "@react-native-google-signin/google-signin",
+//       [
+//         "expo-splash-screen",
+//         {
+//           image: "./assets/images/icon.png",
+//           imageWidth: 200,
+//           resizeMode: "contain",
+//           backgroundColor: "#ffffff"
+//         }
+//       ],
+//       "expo-secure-store"
+//     ],
+//     experiments: {
+//       typedRoutes: true
+//     },
+//     extra: {
+//       router: {
+//         origin: false
+//       },
+//       eas: {
+//         projectId: "5b291872-be80-4e90-b337-b849955315db"
+//       }
+//     },
+//     updates: {
+//       url: "https://u.expo.dev/53eb3d06-ff8d-461a-a8ce-539864ebd285"
+//     },
+//     owner: "emiliojunior"
+//   }
+// });
