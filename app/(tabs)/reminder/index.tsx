@@ -179,60 +179,8 @@ export default function ReminderScreen() {
     // fetchReminder(); // Ngambil Data dari Lokal (sementara pakai dummy)
   }, []);
 
-  return (
-    <View className="flex-1 bg-white align-top p-2">
-      <TouchableOpacity
-        className="flex flex-row w-fit h-fit items-center"
-        onPress={() => {
-          router.back();
-          speak("Kembali ke Beranda", "id-ID", speechRate);
-        }}
-      >
-        <Ionicons name="arrow-back" size={25} />
-        <Text
-          style={{ fontSize: scaledFontSize("text-base") }}
-          className="ml-2 text-base text-black font-medium"
-        >
-          Kembali
-        </Text>
-      </TouchableOpacity>
-
-      {/* button untuk nambah jadwal */}
-      <TouchableOpacity
-        onPress={() => {
-          router.navigate("/(tabs)/reminder/addReminder");
-          speak("Menambahkan Jadwal", "id-ID", speechRate);
-        }}
-        className="w-[80%] h-[60px] bg-[#150E7C] rounded-[20px] flex items-center mx-auto mt-3"
-      >
-        <Text
-          style={{ fontSize: scaledFontSize("text-2xl") }}
-          className="my-auto text-2xl text-white font-bold"
-        >
-          Tambahkan jadwal baru
-        </Text>
-      </TouchableOpacity>
-
-      {/* line ngebatasin apalah itu */}
-      <View className="w-[90%] h-[1px] bg-[#150E7C] mx-auto mt-4"></View>
-
-      {/* start of  container list jadwal */}
-      <View className="w-[95%] h-full border border-[#150E7C] rounded-t-[10px] mt-6 mx-auto flex flex-col items-center p-2">
-        {/* text untuk total jadwal yang berlangsung */}
-        <Text
-          style={{ fontSize: scaledFontSize("text-base") }}
-          className="text-base font-semibold text-[#150E7C] mb-3"
-        >
-          Jadwal yang sedang berlangsung: {reminderData.filter((item) => item.isActive).length}
-        </Text>
-
-        {/* start of generate list jadwal minum obat yang ada */}
-        {/* container */}
-        <FlatList
-          data={reminderData}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => (
-            <View className="w-[95%] min-h-[15vh] border border-[#150E7C] rounded-[10px] items-center p-2 mb-3">
+  const renderItemReminder = ({item}: {item: ReminderData}) => (
+    <View className="w-[95%] min-h-[15vh] border border-[#150E7C] rounded-[10px] items-center p-2 mb-3">
               <View className="w-[95%] h-fit flex flex-row items-center ">
                 <Image
                   source={getImageByType(item.jenisObat)}
@@ -343,7 +291,61 @@ export default function ReminderScreen() {
                 </Text>
               </TouchableOpacity>
             </View>
-          )}
+  );
+
+  return (
+    <View className="flex-1 bg-white align-top p-2">
+      <TouchableOpacity
+        className="flex flex-row w-fit h-fit items-center"
+        onPress={() => {
+          router.back();
+          speak("Kembali ke Beranda", "id-ID", speechRate);
+        }}
+      >
+        <Ionicons name="arrow-back" size={25} />
+        <Text
+          style={{ fontSize: scaledFontSize("text-base") }}
+          className="ml-2 text-base text-black font-medium"
+        >
+          Kembali
+        </Text>
+      </TouchableOpacity>
+
+      {/* button untuk nambah jadwal */}
+      <TouchableOpacity
+        onPress={() => {
+          router.navigate("/(tabs)/reminder/addReminder");
+          speak("Menambahkan Jadwal", "id-ID", speechRate);
+        }}
+        className="w-[80%] h-[60px] bg-[#150E7C] rounded-[20px] flex items-center mx-auto mt-3"
+      >
+        <Text
+          style={{ fontSize: scaledFontSize("text-2xl") }}
+          className="my-auto text-2xl text-white font-bold"
+        >
+          Tambahkan jadwal baru
+        </Text>
+      </TouchableOpacity>
+
+      {/* line ngebatasin apalah itu */}
+      <View className="w-[90%] h-[1px] bg-[#150E7C] mx-auto mt-4"></View>
+
+      {/* start of  container list jadwal */}
+      <View className="w-[95%] h-full border border-[#150E7C] rounded-t-[10px] mt-6 mx-auto flex flex-col items-center p-2">
+        {/* text untuk total jadwal yang berlangsung */}
+        <Text
+          style={{ fontSize: scaledFontSize("text-base") }}
+          className="text-base font-semibold text-[#150E7C] mb-3"
+        >
+          Jadwal yang sedang berlangsung: {reminderData.filter((item) => item.isActive).length}
+        </Text>
+
+        {/* start of generate list jadwal minum obat yang ada */}
+        {/* container */}
+        <FlatList
+          data={reminderData}
+          renderItem={renderItemReminder}
+          keyExtractor={(item) => item.id}
         />
       </View>
       {/* end of  container list jadwal */}
