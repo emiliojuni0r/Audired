@@ -62,22 +62,22 @@ export default function LabelScannerResult() {
     console.error("Gagal parsing result:", err);
   }
 
-  useEffect(() => {
-    saveKeRiwayat();
-    // Tambahkan pemanggilan fungsi speak setelah komponen dipasang (load selesai)
-    if (parsedResult?.data) {
-      let textToSpeak = "";
-      for (const key in parsedResult.data) {
-        if (parsedResult.data.hasOwnProperty(key) && parsedResult.data[key]) {
-          const formattedKey = key.replace(/([A-Z])/g, " $1").trim(); // Format key untuk dibacakan
-          textToSpeak += `${formattedKey}: ${parsedResult.data[key]}. `;
-        }
-      }
-      speak(`Hasil scan: ${textToSpeak}`, "id-ID", speechRate);
-    } else {
-      speak("Tidak ada hasil scan untuk dibacakan.", "id-ID", speechRate);
-    }
-  }, [parsedResult, speechRate]);
+  // useEffect(() => {
+  //   saveKeRiwayat();
+  //   // Tambahkan pemanggilan fungsi speak setelah komponen dipasang (load selesai)
+  //   if (parsedResult?.data) {
+  //     let textToSpeak = "";
+  //     for (const key in parsedResult.data) {
+  //       if (parsedResult.data.hasOwnProperty(key) && parsedResult.data[key]) {
+  //         const formattedKey = key.replace(/([A-Z])/g, " $1").trim(); // Format key untuk dibacakan
+  //         textToSpeak += `${formattedKey}: ${parsedResult.data[key]}. `;
+  //       }
+  //     }
+  //     speak(`Hasil scan: ${textToSpeak}`, "id-ID", speechRate);
+  //   } else {
+  //     speak("Tidak ada hasil scan untuk dibacakan.", "id-ID", speechRate);
+  //   }
+  // }, [parsedResult, speechRate]);
 
   // console.log("ini adalah parsed result :",parsedResult)
   const scannedImage = image;
@@ -255,7 +255,7 @@ export default function LabelScannerResult() {
 
       {/* button */}
       <View className="flex flex-col w-[90%] h-fit justify-center items-center gap-y-3 mt-3">
-        <TouchableOpacity className="bg-[#150E7C] w-[90%] h-[8vh] flex justify-center items-center rounded-[10px]">
+        <TouchableOpacity onPress={handleBacaHasil} className="bg-[#150E7C] w-[90%] h-[8vh] flex justify-center items-center rounded-[10px]">
           <Text className="text-white text-2xl font-extrabold">
             Bacakan Hasil
           </Text>
