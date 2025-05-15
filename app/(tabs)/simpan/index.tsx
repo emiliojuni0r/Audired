@@ -15,6 +15,7 @@ import { useState, useCallback, useRef } from "react";
 import axios from "axios";
 import { useEffect } from "react";
 import { auth } from "@/firebase";
+import { useSpeechRate } from "@/context/SpeechRateContext";
 
 
 
