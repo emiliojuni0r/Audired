@@ -176,7 +176,7 @@ export default function ReminderScreen() {
   const deleteReminderForever = async () => {};
 
   useEffect(() => {
-    // fetchReminder(); // Ngambil Data dari Lokal (sementara pakai dummy)
+    fetchReminder(); // Ngambil Data dari Lokal
   }, []);
 
   const renderItemReminder = ({item}: {item: ReminderData}) => (
