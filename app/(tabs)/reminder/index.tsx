@@ -2,25 +2,17 @@ import { useFontSize } from "@/context/FontSizeContext";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { navigate } from "expo-router/build/global-state/routing";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  Image,
-  FlatList,
-} from "react-native";
+import { View, Text, Touchable, TouchableOpacity, Image } from "react-native";
 import * as Speech from "expo-speech";
 import { useEffect, useRef, useState } from "react";
 import { useSpeechRate } from "@/context/SpeechRateContext";
-import { saveItem, getItem } from "@/context/SecureStorage";
-import {
-  deleteScheduleMedicationReminder,
-  deleteScheduleMedicatioReminderForever,
-} from "@/context/ScheduleNotifications";
+import {saveItem,getItem} from "@/context/SecureStorage";
+import {deleteScheduleMedicationReminder,deleteScheduleMedicatioReminderForever} from "@/context/ScheduleNotifications";
+
 
 // buat interface dulu bang
 export interface ReminderData {
-  id: string;
+  id : string
   namaObat: string;
   jenisObat: string;
   dosisObat: string;
@@ -32,53 +24,6 @@ export interface ReminderData {
   notificationTimes: string[]; // ISO date strings
   isActive: boolean;
 }
-
-// Data dummy (contoh)
-const dummyReminderData: ReminderData[] = [
-  {
-    id: "1",
-    namaObat: "Paracetamol",
-    jenisObat: "Tablet",
-    dosisObat: "500mg",
-    intervalHour: 8,
-    intervalMinute: 0,
-    startHour: 9,
-    startMinute: 0,
-    timesPerDay: 3,
-    notificationTimes: ["2025-05-11T09:00:00.000Z", "2025-05-11T17:00:00.000Z"],
-    isActive: true,
-  },
-  {
-    id: "2",
-    namaObat: "Amoxicillin",
-    jenisObat: "Kapsul",
-    dosisObat: "250mg",
-    intervalHour: 6,
-    intervalMinute: 0,
-    startHour: 8,
-    startMinute: 30,
-    timesPerDay: 4,
-    notificationTimes: [
-      "2025-05-11T08:30:00.000Z",
-      "2025-05-11T14:30:00.000Z",
-      "2025-05-11T20:30:00.000Z",
-    ],
-    isActive: true,
-  },
-  {
-    id: "3",
-    namaObat: "Salep Luka",
-    jenisObat: "Oles",
-    dosisObat: "Secukupnya",
-    intervalHour: 12,
-    intervalMinute: 0,
-    startHour: 7,
-    startMinute: 0,
-    timesPerDay: 2,
-    notificationTimes: ["2025-05-11T07:00:00.000Z", "2025-05-11T19:00:00.000Z"],
-    isActive: false,
-  },
-];
 
 export default function ReminderScreen() {
   const { scaledFontSize } = useFontSize();
@@ -104,9 +49,7 @@ export default function ReminderScreen() {
 
   const [lihatDetail, SetLihatDetail] = useState(false);
   const [isActive, setIsActive] = useState(false);
-  const [reminderData, setReminderData] = useState<ReminderData[]>(
-    dummyReminderData // Menggunakan data dummy di sini untuk inisialisasi awal
-  );
+  const [reminderData, setReminderData] = useState<ReminderData[]>([]);  
 
   // ini kumpulan variable untuk gambar sesuai dengan tipe obat
 
@@ -126,58 +69,41 @@ export default function ReminderScreen() {
 
   const imgInhaler = require("../../../assets/images/icons/Inhaler.png");
 
-  const getImageByType = (jenisObat: string) => {
-    switch (jenisObat.toLowerCase()) {
-      case "tablet":
-        return imgTablet;
-      case "oles":
-        return imgOles;
-      case "cair":
-        return imgCair;
-      case "kapsul":
-        return imgKapsul;
-      case "perban":
-        return imgPerban;
-      case "suntik":
-        return imgSuntik;
-      case "tetes":
-        return imgTetes;
-      case "inhaler":
-        return imgInhaler;
-      default:
-        return imgTablet; // Gambar default jika tidak dikenali
-    }
-  };
-
   const handleReminderData = async (): Promise<ReminderData[] | null> => {
     try {
       const rawData = await getItem("jadwalObat");
-      console.log(rawData);
+      console.log(rawData)
       if (!rawData) return null;
-
+  
       const parsedData: ReminderData[] = JSON.parse(rawData);
       return parsedData;
     } catch (error) {
       console.error("Error reading reminder data:", error);
       return null;
     }
-  };
+  }
 
   const fetchReminder = async () => {
     const reminder = await handleReminderData();
     if (reminder) {
       setReminderData(reminder);
-      console.log("Berhasil Ambil Data bang");
+      console.log("BErhasil AMbil Data bang")
     }
-  };
+  }
 
-  const deleteReminder = async () => {};
+  const deleteReminder = async () => {
 
-  const deleteReminderForever = async () => {};
+  }
+
+  const deleteReminderForever = async () => {
+
+  }
+
 
   useEffect(() => {
-    // fetchReminder(); // Ngambil Data dari Lokal (sementara pakai dummy)
+    fetchReminder(); // Ngambil Data dari Lokal
   }, []);
+  
 
   const renderItemReminder = ({item}: {item: ReminderData}) => (
     <View className="w-[95%] min-h-[15vh] border border-[#150E7C] rounded-[10px] items-center p-2 mb-3">
@@ -218,71 +144,18 @@ export default function ReminderScreen() {
                   lihatDetail ? "flex" : "hidden"
                 } w-full items-center my-3`}
               >
-                <View className="w-[90%] h-[0.1px] border-t border-[#150E7C]" />
+                Matikan jadwal sementara
+              </Text>
+            </TouchableOpacity>
 
-                <Text className="text-[#150E7C] my-2">
-                  Jadwal mendatang : {/* Implementasikan logika perhitungan waktu mendatang */}
-                  {item.notificationTimes.length > 0
-                    ? new Date(item.notificationTimes[0]).toLocaleTimeString(
-                        "id-ID",
-                        { hour: "2-digit", minute: "2-digit" }
-                      )
-                    : "Tidak ada jadwal"}
-                </Text>
+            {/* ini untuk delete */}
 
-                <View className="w-[90%] h-[0.1px] border-t border-[#150E7C]" />
+            <TouchableOpacity
+              onPress={() => {}}
+              className={`
 
-                {/* ini untuk kapan terakhir dinonaktifkan */}
-
-                <Text className="text-base my-1">
-                  Telah berlangsung selama: {/* Implementasikan logika perhitungan durasi */}
-                  {item.isActive ? "Sedang Berlangsung" : "Belum diaktifkan"}
-                </Text>
-
-                {/* ini button untuk aktifkan kembali jadwal */}
-
-                <TouchableOpacity
-                  onPress={() => {
-                    // Implementasikan logika untuk mengaktifkan/menonaktifkan jadwal
-                    // setIsActive(!isActive);
-                  }}
-                  className={`bg-white border border-[#150E7C] w-[70%] h-[40px] flex justify-center items-center rounded-[10px] mt-3`}
-                >
-                  <Text
-                    style={{ fontSize: scaledFontSize("text-base") }}
-                    className={`
-                      text-[#150E7C]
-                    } font-normal text-base`}
-                  >
-                    {item.isActive
-                      ? "Matikan jadwal sementara"
-                      : "Aktifkan jadwal"}
-                  </Text>
-                </TouchableOpacity>
-
-                {/* ini untuk delete */}
-
-                <TouchableOpacity
-                  onPress={() => {
-                    // Implementasikan logika untuk menghapus jadwal selamanya
-                  }}
-                  className={`bg-white border border-[#150E7C] w-[70%] h-[40px] flex justify-center items-center rounded-[10px] mt-3`}
-                >
-                  <Text
-                    style={{ fontSize: scaledFontSize("text-base") }}
-                    className={"text-[#150E7C] font-normal text-base"}
-                  >
-                    Hapus jadwal selamanya
-                  </Text>
-                </TouchableOpacity>
-              </View>
-
-              <TouchableOpacity
-                onPress={() => {
-                  SetLihatDetail(!lihatDetail);
-                }}
-                className="bg-[#150E7C] w-[70%] h-[40px] flex justify-center items-center rounded-[10px] mt-auto"
-              >
+"bg-white border border-[#150E7C] w-[70%] h-[40px] flex justify-center items-center rounded-[10px] mt-3`}
+            >
                 <Text
                   style={{ fontSize: scaledFontSize("text-base") }}
                   className="text-white font-normal text-base"

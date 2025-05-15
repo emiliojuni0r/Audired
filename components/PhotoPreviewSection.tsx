@@ -15,6 +15,7 @@ import * as Speech from "expo-speech";
 import { auth } from "../firebase";
 import { useSpeechRate } from "@/context/SpeechRateContext";
 
+
 export default function PhotoPreviewSection({
   photo,
   handleRetakePhoto,
@@ -60,20 +61,24 @@ export default function PhotoPreviewSection({
     speak("Lihat hasil scan", "id-ID", speechRate);
     setLoading(true);
     try {
-      console.log("Starting API call..."); // Debugging log
-
+      console.log("Starting API call...");
+      console.log("Original image data:", photo.base64?.length, "chars");
+  
       const user = auth.currentUser;
-      const token = await user?.getIdToken();
-
-      if (!photo.base64) {
-        console.error("Base64 image data is missing");
-        return;
+      if (!user) throw new Error("User not authenticated");
+      
+      const token = await user.getIdToken();
+      if (!token) throw new Error("Failed to get auth token");
+  
+      if (!photo?.base64) {
+        throw new Error("Base64 image data is missing");
       }
-
-      console.log("processing image from backend");
-      const imageData = photo.base64;
-      const language = "id";
-
+  
+      // Clean the base64 string (remove data URL prefix if present)
+      const imageData = photo.base64.startsWith('data:image') 
+        ? photo.base64.split(',')[1] 
+        : photo.base64;
+      
       const response = await fetch(
         "https://audired-820e0.et.r.appspot.com/api/process/scan-medication",
         {
@@ -83,31 +88,40 @@ export default function PhotoPreviewSection({
             Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
-            imageData,
-            language,
+            imageData, // Send the cleaned base64
+            language: "id",
           }),
         }
       );
-
-      const data = await response.json();
-
-      if (response.ok) {
-        console.log("Scan result:", JSON.stringify(data));
-        router.push({
-          pathname: "/(tabs)/labelScanner/result",
-          params: {
-            image: imageData,
-            result: JSON.stringify(data),
-          },
-        });
-      } else {
-        throw new Error(data?.error || "Failed to process label scanning.");
+  
+      // Check for network errors first
+      if (!response.ok) {
+        const errorData = await response.text();
+        console.error("Backend error response:", errorData);
+        throw new Error(`Server error: ${response.status} - ${errorData}`);
       }
+  
+      const data = await response.json();
+      console.log("Scan result:", data);
+  
+      router.push({
+        pathname: "/(tabs)/labelScanner/result",
+        params: {
+          image: imageData,
+          result: JSON.stringify(data),
+        },
+      });
+  
     } catch (error) {
-      console.error("Error during label reading:", error);
-      Alert.alert(
-        "Scan Failed",
-        "An error occurred while processing the label."
+      console.error("Full error details:", {
+        message: error,
+        stack: error,
+        response: error,
+      });
+      
+      alert(
+        `Scan Failed 
+       ${error}` || "An error occurred while processing the label."
       );
     } finally {
       setLoading(false);
