@@ -3,14 +3,21 @@ import * as Notifications from 'expo-notifications';
 
 // Ini Fungsi Buat Set Notifikasi
 export const scheduleMedicationReminder = async (title:string, body:string, hour:number, minute:number) => {
-    const trigger = new Date();
-    trigger.setHours(hour);
-    trigger.setMinutes(minute);
-    trigger.setSeconds(0);
+    const now = new Date();
 
+    const trigger = new Date(
+      Date.UTC(
+        now.getUTCFullYear(),
+        now.getUTCMonth(),
+        now.getUTCDate(),
+        hour - 7, // Subtract 7 to convert WIB to UTC
+        minute,
+        0
+      )
+    );  
     // Kalau waktu nya udah lewat, set it for the next day
     if (trigger < new Date()) {
-        trigger.setDate(trigger.getDate() + 1);
+        trigger.setUTCDate(trigger.getUTCDate() + 1);
     }
 
     const id = await Notifications.scheduleNotificationAsync({
@@ -19,7 +26,7 @@ export const scheduleMedicationReminder = async (title:string, body:string, hour
           body: body,
           sound: true,
         },
-        trigger : trigger as unknown as Notifications.NotificationTriggerInput, // i really dont have any idea what the fuck is this
+        trigger: trigger as unknown as Notifications.NotificationTriggerInput, // force cast is necessary for now
       });
     
     console.log("Berhasil membuat Notifikasi dengan judul :",`${title}` )
