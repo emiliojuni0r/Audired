@@ -43,7 +43,7 @@ export default function TabsLayout() {
           }}
         />
         <Tabs.Screen
-          name="settings"
+          name="settings/index"
           options={{
             tabBarLabel : 'Pengaturan',
             headerShown: false,
@@ -57,10 +57,16 @@ export default function TabsLayout() {
           }}
         />
         <Tabs.Screen name="reminder/index" options={{href: null, headerShown: false}} /> // reminder ga nambah di bottom nav
+        <Tabs.Screen name="reminder/addReminder" options={{href: null, headerShown: false}} /> // reminder ga nambah di bottom nav
+        <Tabs.Screen name="reminder/addTime" options={{href: null, headerShown: false}} /> // reminder ga nambah di bottom nav
         <Tabs.Screen name="history/index" options={{href: null, headerShown: false}} /> // history ga nambah di bottom nav
         <Tabs.Screen name="labelScanner/index" options={{href: null, headerShown: false}} /> // history ga nambah di bottom nav
         <Tabs.Screen name="labelScanner/result" options={{href: null, headerShown: false}} /> // history ga nambah di bottom nav
         <Tabs.Screen name="simpan/index" options={{href: null, headerShown: false}} /> // history ga nambah di bottom nav
+        <Tabs.Screen name="history/historyReminder" options={{href: null, headerShown: false}} /> // history ga nambah di bottom na
+        <Tabs.Screen name="history/historyScan" options={{href: null, headerShown: false}} /> // history ga nambah di bottom nav
+        <Tabs.Screen name="settings/settingAplikasi" options={{href: null, headerShown: false}} /> // history ga nambah di bottom nav
+        <Tabs.Screen name="settings/profile" options={{href: null, headerShown: false}} /> // history ga nambah di bottom nav
       </Tabs>
     </>
   );
