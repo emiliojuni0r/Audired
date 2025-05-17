@@ -260,7 +260,7 @@ export default function LabelScannerResult() {
             Bacakan Hasil
           </Text>
         </TouchableOpacity>
-        <TouchableOpacity
+        <TouchableOpacity 
           onPress={() => {
             setIsSaved(!isSaved);
             handleSaveResult();
